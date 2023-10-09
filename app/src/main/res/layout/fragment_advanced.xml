@@ -24,8 +24,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
-            android:tint="#8a000000"
-            app:srcCompat="@drawable/ic_apps_black_24dp" />
+            app:srcCompat="@drawable/ic_apps_black_24dp"
+            app:tint="#8a000000" />
 
         <TextView
             android:layout_width="0dp"
@@ -66,8 +66,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
-            android:tint="#8a000000"
-            app:srcCompat="@drawable/ic_map_white_24dp" />
+            app:srcCompat="@drawable/ic_map_white_24dp"
+            app:tint="#8a000000" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switch_gmaps_navigation"
@@ -100,8 +100,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
-            android:tint="#8a000000"
-            app:srcCompat="@drawable/ic_view_agenda_white_24dp" />
+            app:srcCompat="@drawable/ic_view_agenda_white_24dp"
+            app:tint="#8a000000" />
 
         <TextView
             android:layout_width="0dp"
@@ -130,8 +130,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
-            android:tint="#8a000000"
-            app:srcCompat="@drawable/ic_delete_sweep_black_24dp" />
+            app:srcCompat="@drawable/ic_delete_sweep_black_24dp"
+            app:tint="#8a000000" />
 
         <TextView
             android:layout_width="0dp"
@@ -158,9 +158,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
-            android:tint="#8a000000"
-            app:srcCompat="@drawable/ic_bug_report_black_24dp" />
-
+            app:srcCompat="@drawable/ic_bug_report_black_24dp"
+            app:tint="#8a000000" />
 
         <TextView
             android:layout_width="0dp"

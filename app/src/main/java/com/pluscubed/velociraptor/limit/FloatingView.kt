@@ -15,51 +15,26 @@ import androidx.appcompat.view.ContextThemeWrapper
 import androidx.core.content.ContextCompat
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
-import butterknife.BindView
-import butterknife.ButterKnife
-import com.gigamole.library.ArcProgressStackView
 import com.pluscubed.velociraptor.R
 import com.pluscubed.velociraptor.utils.PrefUtils
 import com.pluscubed.velociraptor.utils.Utils
+import devlight.io.library.ArcProgressStackView
+import com.google.android.material.R as MaterialR
 import java.util.*
 
 class FloatingView(private val service: LimitService) : LimitView {
-
-    @BindView(R.id.limit)
-    @JvmField
-    var limitView: View? = null
-
-    @BindView(R.id.limit_label_text)
-    @JvmField
-    var limitLabelText: TextView? = null
-
-    @BindView(R.id.limit_text)
-    @JvmField
-    var limitText: TextView? = null
-
-    @BindView(R.id.limit_source_text)
-    @JvmField
-    var limitSourceText: TextView? = null
-
-    @BindView(R.id.speedometer)
-    @JvmField
-    var speedometerView: View? = null
-
-    @BindView(R.id.arcview)
-    @JvmField
-    var arcView: ArcProgressStackView? = null
-
-    @BindView(R.id.speed)
-    @JvmField
-    var speedometerText: TextView? = null
-
-    @BindView(R.id.speedUnits)
-    @JvmField
-    var speedometerUnitsText: TextView? = null
+    private lateinit var limitView: View
+    private lateinit var limitLabelText: TextView
+    private lateinit var limitText: TextView
+    private lateinit var limitSourceText: TextView
+    private lateinit var speedometerView: View
+    private lateinit var arcView: ArcProgressStackView
+    private lateinit var speedometerText: TextView
+    private lateinit var speedometerUnitsText: TextView
 
     private val windowManager: WindowManager?
     private var style: Int = 0
-    private var floatingView: View? = null
+    private lateinit var floatingView: View
     private var debuggingText: TextView? = null
 
     private val windowType: Int
@@ -110,7 +85,14 @@ class FloatingView(private val service: LimitService) : LimitView {
         floatingView = LayoutInflater.from(ContextThemeWrapper(service, R.style.Theme_Velociraptor_Light))
                 .inflate(layout, null, false)
 
-        ButterKnife.bind(this, floatingView!!)
+        limitView = floatingView.findViewById(R.id.limit)
+        limitLabelText = floatingView.findViewById(R.id.limit_label_text)
+        limitText = floatingView.findViewById(R.id.limit_text)
+        limitSourceText = floatingView.findViewById(R.id.limit_source_text)
+        speedometerView = floatingView.findViewById(R.id.speedometer)
+        arcView = floatingView.findViewById(R.id.arcview)
+        speedometerText = floatingView.findViewById(R.id.speed)
+        speedometerUnitsText = floatingView.findViewById(R.id.speedUnits)
 
         val params = WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -235,7 +217,7 @@ class FloatingView(private val service: LimitService) : LimitView {
         val redColor = ContextCompat.getColor(service, R.color.red500)
 
         val typedValue = TypedValue()
-        speedometerText?.context?.theme?.resolveAttribute(R.attr.colorOnBackground, typedValue, true)
+        speedometerText?.context?.theme?.resolveAttribute(MaterialR.attr.colorOnBackground, typedValue, true)
         val textColor = speedometerText?.context?.let { ContextCompat.getColor(it, typedValue.resourceId) }
                 ?: Color.BLACK;
 

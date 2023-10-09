@@ -33,7 +33,7 @@ class ChangelogDialogFragment : DialogFragment() {
                             .setData(Uri.parse("https://play.google.com/store/apps/details?id=com.pluscubed.velociraptor"))
                     startActivity(intent)
                 }
-                .negativeButton(R.string.support) { (activity as SettingsActivity).showSupportDialog() }
+                //.negativeButton(R.string.support) { (activity as SettingsActivity).showSupportDialog() }
 
         val webView = customView.findViewById<View>(R.id.webview) as WebView
         try {

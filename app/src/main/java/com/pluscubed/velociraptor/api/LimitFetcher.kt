@@ -2,7 +2,6 @@ package com.pluscubed.velociraptor.api
 
 import android.content.Context
 import android.location.Location
-import com.android.billingclient.api.Purchase
 import com.pluscubed.velociraptor.BuildConfig
 import com.pluscubed.velociraptor.api.cache.CacheLimitProvider
 import com.pluscubed.velociraptor.api.osm.OsmLimitProvider
@@ -46,10 +45,6 @@ class LimitFetcher(private val context: Context) {
             builder.addInterceptor(loggingInterceptor)
         }
         return builder.build()
-    }
-
-    fun verifyRaptorService(purchase: Purchase): Boolean {
-        return raptorLimitProvider.verify(purchase)
     }
 
     suspend fun getSpeedLimit(location: Location): LimitResponse {

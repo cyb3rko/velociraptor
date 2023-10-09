@@ -22,9 +22,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
-            android:tint="#8a000000"
-            app:srcCompat="@drawable/ic_octagon" />
-
+            app:srcCompat="@drawable/ic_octagon"
+            app:tint="#8a000000" />
 
         <TextView
             android:layout_width="0dp"
@@ -64,9 +63,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
-            android:tint="#8a000000"
-            app:srcCompat="@drawable/ic_speedometer" />
-
+            app:srcCompat="@drawable/ic_speedometer"
+            app:tint="#8a000000" />
 
         <TextView
             android:layout_width="0dp"
@@ -106,9 +104,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
-            android:tint="#8a000000"
-            app:srcCompat="@drawable/ic_volume_up_black_24dp" />
-
+            app:srcCompat="@drawable/ic_volume_up_black_24dp"
+            app:tint="#8a000000" />
 
         <TextView
             android:layout_width="0dp"
@@ -157,9 +154,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
-            android:tint="#8a000000"
-            app:srcCompat="@drawable/ic_ruler" />
-
+            app:srcCompat="@drawable/ic_ruler"
+            app:tint="#8a000000" />
 
         <TextView
             android:layout_width="0dp"
@@ -197,9 +193,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
-            android:tint="#8a000000"
-            app:srcCompat="@drawable/ic_style_white_24dp" />
-
+            app:srcCompat="@drawable/ic_style_white_24dp"
+            app:tint="#8a000000" />
 
         <TextView
             android:layout_width="0dp"
@@ -238,9 +233,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
-            android:tint="#8a000000"
-            app:srcCompat="@drawable/ic_text_fields_black_24dp" />
-
+            app:srcCompat="@drawable/ic_text_fields_black_24dp"
+            app:tint="#8a000000" />
 
         <TextView
             android:layout_width="0dp"
@@ -280,9 +274,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
-            android:tint="#8a000000"
-            app:srcCompat="@drawable/ic_opacity_black_24dp" />
-
+            app:srcCompat="@drawable/ic_opacity_black_24dp"
+            app:tint="#8a000000" />
 
         <TextView
             android:layout_width="0dp"
@@ -321,9 +314,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
-            android:tint="#8a000000"
-            app:srcCompat="@drawable/ic_track_changes_black_24dp" />
-
+            app:srcCompat="@drawable/ic_track_changes_black_24dp"
+            app:tint="#8a000000" />
 
         <TextView
             android:layout_width="0dp"

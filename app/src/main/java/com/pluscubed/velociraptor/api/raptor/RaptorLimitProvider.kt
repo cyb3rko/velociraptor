@@ -2,13 +2,10 @@ package com.pluscubed.velociraptor.api.raptor
 
 import android.content.Context
 import android.location.Location
-import androidx.annotation.WorkerThread
-import com.android.billingclient.api.Purchase
 import com.google.maps.android.PolyUtil
 import com.pluscubed.velociraptor.BuildConfig
 import com.pluscubed.velociraptor.api.*
 import com.pluscubed.velociraptor.api.cache.CacheLimitProvider
-import com.pluscubed.velociraptor.billing.BillingConstants
 import com.pluscubed.velociraptor.utils.PrefUtils
 import com.pluscubed.velociraptor.utils.Utils
 import okhttp3.OkHttpClient
@@ -51,28 +48,6 @@ class RaptorLimitProvider(
         }
         hereToken = ""
         tomtomToken = ""
-    }
-
-    /**
-     * Returns whether updated token
-     */
-    @WorkerThread
-    fun verify(purchase: Purchase): Boolean {
-        var updated = false
-        val verificationNetworkResponse = raptorService.verify(id, purchase.originalJson).execute()
-        val verificationResponse = Utils.getResponseBody(verificationNetworkResponse)
-        val token = verificationResponse.token
-        if (purchase.sku == BillingConstants.SKU_HERE || USE_DEBUG_ID) {
-            if (hereToken.isEmpty())
-                updated = true
-            hereToken = token
-        }
-        if (purchase.sku == BillingConstants.SKU_TOMTOM || USE_DEBUG_ID) {
-            if (tomtomToken.isEmpty())
-                updated = true
-            tomtomToken = token
-        }
-        return updated
     }
 
     override fun getSpeedLimit(

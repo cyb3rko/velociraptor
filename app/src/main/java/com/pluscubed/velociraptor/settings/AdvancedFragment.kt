@@ -11,20 +11,17 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.pluscubed.velociraptor.BuildConfig
 import com.pluscubed.velociraptor.R
 import com.pluscubed.velociraptor.api.cache.CacheLimitProvider
+import com.pluscubed.velociraptor.databinding.FragmentAdvancedBinding
 import com.pluscubed.velociraptor.limit.LimitService
 import com.pluscubed.velociraptor.settings.appselection.AppSelectionActivity
 import com.pluscubed.velociraptor.utils.NotificationUtils
@@ -33,25 +30,10 @@ import com.pluscubed.velociraptor.utils.Utils
 import kotlinx.coroutines.*
 
 class AdvancedFragment : Fragment() {
+    private var _binding: FragmentAdvancedBinding? = null
 
-    //Advanced
-    @BindView(R.id.switch_debugging)
-    lateinit var debuggingSwitch: SwitchMaterial
-
-    @BindView(R.id.linear_clear_cache)
-    lateinit var clearCacheContainer: View
-
-    @BindView(R.id.button_app_selection)
-    lateinit var appSelectionButton: Button
-
-    @BindView(R.id.linear_gmaps_navigation)
-    lateinit var gmapsOnlyNavigationContainer: ViewGroup
-
-    @BindView(R.id.switch_gmaps_navigation)
-    lateinit var gmapsOnlyNavigationSwitch: SwitchMaterial
-
-    @BindView(R.id.switch_notif_controls)
-    lateinit var notifControlsContainer: View
+    // This property is only valid between onCreateView and onDestroyView.
+    private val binding get() = _binding!!
 
     private lateinit var cacheLimitProvider: CacheLimitProvider
 
@@ -69,20 +51,20 @@ class AdvancedFragment : Fragment() {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_advanced, container, false)
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentAdvancedBinding.inflate(layoutInflater)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ButterKnife.bind(this, view)
 
         notificationManager =
                 activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notifControlsContainer.setOnClickListener {
+        binding.switchNotifControls.setOnClickListener {
             val intent = Intent(context, LimitService::class.java)
             intent.putExtra(LimitService.EXTRA_NOTIF_START, true)
             val pending = PendingIntent.getService(
@@ -121,29 +103,27 @@ class AdvancedFragment : Fragment() {
 
 
 
-        clearCacheContainer.setOnClickListener {
+        binding.linearClearCache.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 try {
                     withContext(Dispatchers.IO) { cacheLimitProvider.clear() }
                     Snackbar.make(
-                            clearCacheContainer,
-                            getString(R.string.cache_cleared),
-                            Snackbar.LENGTH_SHORT
+                        it,
+                        getString(R.string.cache_cleared),
+                        Snackbar.LENGTH_SHORT
                     ).show()
                 } catch (e: Exception) {
-                    Snackbar.make(clearCacheContainer, "Error: $e", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(it, "Error: $e", Snackbar.LENGTH_SHORT).show()
                     FirebaseCrashlytics.getInstance().recordException(e)
                 }
             }
         }
 
-        appSelectionButton.setOnClickListener {
+        binding.buttonAppSelection.setOnClickListener {
             startActivity(Intent(context, AppSelectionActivity::class.java))
         }
 
-
-
-
+        val debuggingSwitch = binding.switchDebugging
         debuggingSwitch.isChecked = PrefUtils.isDebuggingEnabled(context)
         (debuggingSwitch.parent as View).setOnClickListener { v ->
             debuggingSwitch.isChecked = !debuggingSwitch.isChecked
@@ -153,9 +133,10 @@ class AdvancedFragment : Fragment() {
             Utils.updateFloatingServicePrefs(context)
         }
 
+        val gmapsOnlyNavigationSwitch = binding.switchGmapsNavigation
         gmapsOnlyNavigationSwitch.isChecked = isNotificationAccessGranted &&
                 PrefUtils.isGmapsOnlyInNavigation(context)
-        gmapsOnlyNavigationContainer.setOnClickListener { v ->
+        binding.linearGmapsNavigation.setOnClickListener {
             if (!gmapsOnlyNavigationSwitch.isEnabled) {
                 return@setOnClickListener
             }

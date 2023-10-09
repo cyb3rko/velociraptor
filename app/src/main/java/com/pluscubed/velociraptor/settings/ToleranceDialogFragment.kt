@@ -1,56 +1,36 @@
 package com.pluscubed.velociraptor.settings
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.widget.EditText
 import android.widget.SeekBar
-import android.widget.TextView
-import android.widget.ToggleButton
 import androidx.fragment.app.DialogFragment
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.pluscubed.velociraptor.R
+import com.pluscubed.velociraptor.databinding.DialogToleranceBinding
 import com.pluscubed.velociraptor.utils.PrefUtils
 import com.pluscubed.velociraptor.utils.Utils
 
 class ToleranceDialogFragment : DialogFragment() {
+    private var _binding: DialogToleranceBinding? = null
 
-    @BindView(R.id.text_constant_unit)
-    lateinit var constantUnitText: TextView
-
-    @BindView(R.id.edittext_constant)
-    lateinit var constantEditText: EditText
-
-    @BindView(R.id.seekbar_constant)
-    lateinit var constantSeekbar: SeekBar
-
-    @BindView(R.id.text_percent)
-    lateinit var percentText: TextView
-
-    @BindView(R.id.edittext_percent)
-    lateinit var percentEditText: EditText
-
-    @BindView(R.id.seekbar_percent)
-    lateinit var percentSeekbar: SeekBar
-
-    @BindView(R.id.button_and)
-    lateinit var andButton: ToggleButton
-
-    @BindView(R.id.button_or)
-    lateinit var orButton: ToggleButton
+    // This property is only valid between onCreateView and onDestroyView.
+    private val binding get() = _binding!!
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        @SuppressLint("InflateParams")
-        val dialog = activity!!.layoutInflater.inflate(R.layout.dialog_tolerance, null, false)
-        ButterKnife.bind(this, dialog)
+        _binding = DialogToleranceBinding.inflate(layoutInflater)
 
-        constantUnitText.text = Utils.getUnitText(activity!!)
+        val constantEditText = binding.edittextConstant
+        val constantSeekbar = binding.seekbarConstant
+        val percentEditText = binding.edittextPercent
+        val percentSeekbar = binding.seekbarPercent
+        val andButton = binding.buttonAnd
+        val orButton = binding.buttonOr
+
+        binding.textConstantUnit.text = Utils.getUnitText(activity!!)
         constantEditText.setText(PrefUtils.getSpeedingConstant(activity).toString())
         constantEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
@@ -84,7 +64,7 @@ class ToleranceDialogFragment : DialogFragment() {
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
 
-        percentText.text = getString(R.string.percent, "")
+        binding.textPercent.text = getString(R.string.percent, "")
         percentEditText.setText(PrefUtils.getSpeedingPercent(activity).toString())
         percentEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
@@ -130,7 +110,7 @@ class ToleranceDialogFragment : DialogFragment() {
         }
 
         return MaterialDialog(activity!!)
-                .customView(view = dialog, scrollable = true)
+                .customView(view = binding.root, scrollable = true)
                 .title(R.string.speeding_amount)
                 .negativeButton(android.R.string.cancel)
                 .positiveButton(android.R.string.ok) {

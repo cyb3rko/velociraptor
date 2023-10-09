@@ -54,9 +54,6 @@
 #DbInspector
 -dontwarn org.apache.commons.**
 
-#Billing library
--keep class com.android.vending.billing.**
-
 #Coroutines
 -keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
 -keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}

@@ -10,39 +10,24 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.bumptech.glide.Glide
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.pluscubed.recyclerfastscroll.RecyclerFastScroller
 import com.pluscubed.velociraptor.R
+import com.pluscubed.velociraptor.databinding.ActivityAppselectionBinding
 import com.pluscubed.velociraptor.detection.AppDetectionService
 import com.pluscubed.velociraptor.utils.PrefUtils
 import kotlinx.coroutines.*
 import java.util.*
 
 class AppSelectionActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityAppselectionBinding
 
     private lateinit var adapter: AppAdapter
-
-    @BindView(R.id.fastscroller)
-    lateinit var scroller: RecyclerFastScroller
-
-    @BindView(R.id.swiperefresh)
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-
-    @BindView(R.id.recyclerview)
-    lateinit var recyclerView: RecyclerView
-
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
 
     private var selectedPackageNames: MutableSet<String>? = null
     private var allApps: ArrayList<AppInfo>? = null
@@ -55,20 +40,18 @@ class AppSelectionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_appselection)
-        ButterKnife.bind(this)
-
-        setSupportActionBar(toolbar)
+        binding = ActivityAppselectionBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
 
         adapter = AppAdapter()
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerview.let {
+            it.adapter = adapter
+            it.layoutManager = LinearLayoutManager(this)
+            //binding.fastscroller.attachRecyclerView(it)
+        }
 
-        scroller = findViewById(R.id.fastscroller)
-        scroller.attachRecyclerView(recyclerView)
-
-        swipeRefreshLayout = findViewById(R.id.swiperefresh)
-        swipeRefreshLayout.setOnRefreshListener {
+        binding.swiperefresh.setOnRefreshListener {
             if (isMapsOnly) {
                 reloadMapApps()
             } else {
@@ -76,7 +59,7 @@ class AppSelectionActivity : AppCompatActivity() {
             }
             adapter.setAppInfos(ArrayList())
         }
-        swipeRefreshLayout.setColorSchemeColors(
+        binding.swiperefresh.setColorSchemeColors(
                 ContextCompat.getColor(
                         this,
                         R.color.colorAccent
@@ -111,14 +94,14 @@ class AppSelectionActivity : AppCompatActivity() {
     override fun onPostResume() {
         super.onPostResume()
         if (isLoadingAllApps || isLoadingMapApps) {
-            swipeRefreshLayout.isRefreshing = true
+            binding.swiperefresh.isRefreshing = true
         }
     }
 
     private fun reloadInstalledApps() = lifecycleScope.launch {
         isLoadingAllApps = true
         if (!isMapsOnly)
-            swipeRefreshLayout.isRefreshing = true
+            binding.swiperefresh.isRefreshing = true
         selectedPackageNames = HashSet(PrefUtils.getApps(this@AppSelectionActivity))
 
         try {
@@ -128,7 +111,7 @@ class AppSelectionActivity : AppCompatActivity() {
 
             if (!isMapsOnly) {
                 adapter.setAppInfos(installedApps)
-                swipeRefreshLayout.isRefreshing = false
+                binding.swiperefresh.isRefreshing = false
             }
             allApps = ArrayList(installedApps)
 
@@ -142,7 +125,7 @@ class AppSelectionActivity : AppCompatActivity() {
     private fun reloadMapApps() = lifecycleScope.launch {
         isLoadingMapApps = true
         if (isMapsOnly)
-            swipeRefreshLayout.isRefreshing = true
+            binding.swiperefresh.isRefreshing = true
         selectedPackageNames = PrefUtils.getApps(this@AppSelectionActivity)
 
         try {
@@ -152,7 +135,7 @@ class AppSelectionActivity : AppCompatActivity() {
 
             if (isMapsOnly) {
                 adapter.setAppInfos(mapApps)
-                swipeRefreshLayout.isRefreshing = false
+                binding.swiperefresh.isRefreshing = false
             }
             this@AppSelectionActivity.mapApps = ArrayList(mapApps)
 
@@ -185,7 +168,7 @@ class AppSelectionActivity : AppCompatActivity() {
                 isMapsOnly = !isMapsOnly
                 invalidateOptionsMenu()
                 adapter.setAppInfos(if (isMapsOnly) mapApps else allApps)
-                swipeRefreshLayout.isRefreshing = isMapsOnly && isLoadingMapApps ||
+                binding.swiperefresh.isRefreshing = isMapsOnly && isLoadingMapApps ||
                         !isMapsOnly && isLoadingAllApps
                 return true
             }

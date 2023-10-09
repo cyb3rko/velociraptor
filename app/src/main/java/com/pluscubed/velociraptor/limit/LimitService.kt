@@ -16,18 +16,12 @@ import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import com.android.billingclient.api.BillingClient
-import com.android.billingclient.api.Purchase
 import com.google.android.gms.location.*
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.pluscubed.velociraptor.BuildConfig
 import com.pluscubed.velociraptor.R
 import com.pluscubed.velociraptor.api.LimitFetcher
 import com.pluscubed.velociraptor.api.LimitResponse
-import com.pluscubed.velociraptor.api.raptor.RaptorLimitProvider
-import com.pluscubed.velociraptor.billing.BillingConstants
-import com.pluscubed.velociraptor.billing.BillingManager
 import com.pluscubed.velociraptor.settings.SettingsActivity
 import com.pluscubed.velociraptor.utils.NotificationUtils
 import com.pluscubed.velociraptor.utils.PrefUtils
@@ -57,8 +51,6 @@ class LimitService : LifecycleService() {
     private var isRunning: Boolean = false
     private var isStartedFromNotification: Boolean = false
     private var isLimitHidden: Boolean = false
-
-    private var billingManager: BillingManager? = null
 
     override fun onBind(intent: Intent): IBinder? {
         super.onBind(intent)
@@ -143,44 +135,6 @@ class LimitService : LifecycleService() {
         } catch (unlikely: SecurityException) {
         }
 
-        billingManager = BillingManager(this, object : BillingManager.BillingUpdatesListener {
-            override fun onBillingClientSetupFinished() {
-                if (RaptorLimitProvider.USE_DEBUG_ID) {
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        verifyPurchase(
-                                Purchase(
-                                        """{"productId": "debug", "purchaseToken": "debug"}""",
-                                        ""
-                                )
-                        )
-                    }
-                }
-            }
-
-            override fun onConsumeFinished(token: String, result: Int) {
-
-            }
-
-            override fun onPurchasesUpdated(purchases: List<Purchase>) {
-                val purchased = HashSet<Purchase>()
-                val onetime = BillingConstants.getSkuList(BillingClient.SkuType.INAPP)
-                for (purchase in purchases) {
-                    if (purchase.sku in onetime) {
-                        try {
-                            billingManager?.consumeAsync(purchase.purchaseToken);
-                        } catch (e: Exception) {
-                            FirebaseCrashlytics.getInstance().recordException(e)
-                        }
-                    } else if (purchase.sku == BillingConstants.SKU_HERE || purchase.sku == BillingConstants.SKU_TOMTOM) {
-                        purchased.add(purchase)
-                    }
-                }
-                lifecycleScope.launch(Dispatchers.IO) {
-                    verifyPurchase(*purchased.toTypedArray())
-                }
-            }
-        })
-
         val remoteConfig = FirebaseRemoteConfig.getInstance()
         remoteConfig.fetch().addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -189,27 +143,6 @@ class LimitService : LifecycleService() {
         }
 
         return super.onStartCommand(intent, flags, startId)
-    }
-
-    private fun verifyPurchase(vararg purchases: Purchase) {
-        try {
-            var updated = false
-            purchases.forEach { purchase ->
-                try {
-                    val res = limitFetcher?.verifyRaptorService(purchase) ?: false
-                    if (res)
-                        updated = true
-                } catch (e: Exception) {
-                    FirebaseCrashlytics.getInstance().recordException(e)
-                }
-            }
-
-            if (updated) {
-                forceRefetch()
-            }
-        } catch (e: Exception) {
-            FirebaseCrashlytics.getInstance().recordException(e)
-        }
     }
 
     private fun forceRefetch() {
@@ -284,7 +217,7 @@ class LimitService : LifecycleService() {
         val speedLimitInactive = speedLimitJob == null || !speedLimitJob!!.isActive
         val showLimits = PrefUtils.getShowLimits(this@LimitService)
         val farFromLastLocation = lastLocationWithFetchAttempt == null ||
-                location.distanceTo(lastLocationWithFetchAttempt) > 10
+                location.distanceTo(lastLocationWithFetchAttempt!!) > 10
 
         if (speedLimitInactive && !isLimitHidden && showLimits && farFromLastLocation) {
             speedLimitJob = lifecycleScope.launch {
@@ -459,10 +392,6 @@ class LimitService : LifecycleService() {
 
         if (speedLimitView != null)
             speedLimitView!!.stop()
-
-
-        if (billingManager != null)
-            billingManager!!.destroy()
 
         isRunning = false;
     }

@@ -1,44 +1,34 @@
 package com.pluscubed.velociraptor.settings
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.widget.EditText
 import android.widget.SeekBar
-import android.widget.TextView
 import androidx.fragment.app.DialogFragment
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.pluscubed.velociraptor.R
+import com.pluscubed.velociraptor.databinding.DialogOpacityBinding
 import com.pluscubed.velociraptor.utils.PrefUtils
 import com.pluscubed.velociraptor.utils.Utils
 
 class OpacityDialogFragment : DialogFragment() {
+    private var _binding: DialogOpacityBinding? = null
 
-
-    @BindView(R.id.text_percent)
-    lateinit var percentText: TextView
-
-    @BindView(R.id.edittext_percent)
-    lateinit var percentEditText: EditText
-
-    @BindView(R.id.seekbar_percent)
-    lateinit var percentSeekbar: SeekBar
+    // This property is only valid between onCreateView and onDestroyView.
+    private val binding get() = _binding!!
 
     private var initialTransparency: Int = 0
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        @SuppressLint("InflateParams")
-        val dialog = activity!!.layoutInflater.inflate(R.layout.dialog_opacity, null, false)
-        ButterKnife.bind(this, dialog)
+        _binding = DialogOpacityBinding.inflate(layoutInflater)
 
         initialTransparency = PrefUtils.getOpacity(activity)
 
-        percentText.text = getString(R.string.percent, "")
+        binding.textPercent.text = getString(R.string.percent, "")
+        val percentEditText = binding.edittextPercent
+        val percentSeekbar = binding.seekbarPercent
         percentEditText.setText(PrefUtils.getOpacity(activity).toString())
         percentEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
@@ -92,7 +82,7 @@ class OpacityDialogFragment : DialogFragment() {
         })
 
         return MaterialDialog(activity!!)
-                .customView(view = dialog, scrollable = true)
+                .customView(view = binding.root, scrollable = true)
                 .title(R.string.transparency)
                 .negativeButton(android.R.string.cancel) {
                     PrefUtils.setOpacity(activity, initialTransparency)

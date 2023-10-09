@@ -7,27 +7,19 @@ import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import butterknife.BindView
-import butterknife.ButterKnife
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.pluscubed.velociraptor.BuildConfig
 import com.pluscubed.velociraptor.R
+import com.pluscubed.velociraptor.databinding.ActivitySettingsBinding
 import com.pluscubed.velociraptor.limit.LimitService
 import com.pluscubed.velociraptor.utils.PrefUtils
 import com.pluscubed.velociraptor.utils.Utils
 
 class SettingsActivity : AppCompatActivity() {
-
-    @BindView(R.id.toolbar)
-    lateinit var toolbar: Toolbar
-
-    @BindView(R.id.bottom_navigation)
-    lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var binding: ActivitySettingsBinding
 
     companion object {
         const val PRIVACY_URL = "https://www.pluscubed.com/velociraptor/privacy_policy.html"
@@ -43,10 +35,8 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-        ButterKnife.bind(this)
-
-        setSupportActionBar(toolbar)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         supportFragmentManager.beginTransaction()
                 .add(R.id.main_view, advancedFragment, "advanced").hide(advancedFragment).commit()
@@ -58,7 +48,7 @@ class SettingsActivity : AppCompatActivity() {
                 .add(R.id.main_view, permissionsFragment, "permissions").commit()
 
 
-        bottomNavigationView.setOnNavigationItemSelectedListener {
+        binding.bottomNavigation.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.action_advanced -> {
                     supportFragmentManager.beginTransaction().hide(active).show(advancedFragment)
@@ -102,10 +92,6 @@ class SettingsActivity : AppCompatActivity() {
         PrefUtils.setVersionCode(this, BuildConfig.VERSION_CODE)
     }
 
-    fun showSupportDialog() {
-        providersFragment.showSupportDialog()
-    }
-
     override fun onPause() {
         super.onPause()
         startLimitService(false)
@@ -127,7 +113,7 @@ class SettingsActivity : AppCompatActivity() {
                 return true
             }
             R.id.menu_settings_support -> {
-                showSupportDialog()
+                //showSupportDialog()
                 return true
             }
         }
@@ -158,7 +144,7 @@ class SettingsActivity : AppCompatActivity() {
                     html()
                     lineSpacing(1.2f)
                 }
-                .neutralButton(R.string.privacy_policy) { Utils.openLink(this, toolbar, PRIVACY_URL) }
+                .neutralButton(R.string.privacy_policy) { Utils.openLink(this, binding.toolbar, PRIVACY_URL) }
 
         if (!PrefUtils.isTermsAccepted(this)) {
             dialog = dialog
