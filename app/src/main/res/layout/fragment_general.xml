@@ -23,7 +23,7 @@
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
             app:srcCompat="@drawable/ic_octagon"
-            app:tint="#8a000000" />
+            app:tint="@color/iconTint" />
 
         <TextView
             android:layout_width="0dp"
@@ -64,7 +64,7 @@
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
             app:srcCompat="@drawable/ic_speedometer"
-            app:tint="#8a000000" />
+            app:tint="@color/iconTint" />
 
         <TextView
             android:layout_width="0dp"
@@ -105,7 +105,7 @@
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
             app:srcCompat="@drawable/ic_volume_up_black_24dp"
-            app:tint="#8a000000" />
+            app:tint="@color/iconTint" />
 
         <TextView
             android:layout_width="0dp"
@@ -122,7 +122,7 @@
 
         <Button
             android:id="@+id/button_test_beep"
-            style="@style/Widget.Button.Borderless"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="0dp"
@@ -155,7 +155,7 @@
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
             app:srcCompat="@drawable/ic_ruler"
-            app:tint="#8a000000" />
+            app:tint="@color/iconTint" />
 
         <TextView
             android:layout_width="0dp"
@@ -194,7 +194,7 @@
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
             app:srcCompat="@drawable/ic_style_white_24dp"
-            app:tint="#8a000000" />
+            app:tint="@color/iconTint" />
 
         <TextView
             android:layout_width="0dp"
@@ -234,7 +234,7 @@
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
             app:srcCompat="@drawable/ic_text_fields_black_24dp"
-            app:tint="#8a000000" />
+            app:tint="@color/iconTint" />
 
         <TextView
             android:layout_width="0dp"
@@ -275,7 +275,7 @@
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
             app:srcCompat="@drawable/ic_opacity_black_24dp"
-            app:tint="#8a000000" />
+            app:tint="@color/iconTint" />
 
         <TextView
             android:layout_width="0dp"
@@ -315,7 +315,7 @@
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
             app:srcCompat="@drawable/ic_track_changes_black_24dp"
-            app:tint="#8a000000" />
+            app:tint="@color/iconTint" />
 
         <TextView
             android:layout_width="0dp"

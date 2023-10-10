@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:background="#fff">
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/linear_app_selection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?selectableItemBackground"
         android:baselineAligned="false"
         android:gravity="center_vertical"
         android:minHeight="56dp"
         android:orientation="horizontal"
-        android:paddingStart="16dp"
         android:paddingEnd="12dp"
+        android:paddingStart="16dp"
         tools:ignore="UseCompoundDrawables">
 
         <ImageView
@@ -25,7 +24,7 @@
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
             app:srcCompat="@drawable/ic_apps_black_24dp"
-            app:tint="#8a000000" />
+            app:tint="@color/iconTint" />
 
         <TextView
             android:layout_width="0dp"
@@ -43,7 +42,7 @@
 
         <Button
             android:id="@+id/button_app_selection"
-            style="@style/Widget.Button.Borderless"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/configure" />
@@ -67,7 +66,7 @@
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
             app:srcCompat="@drawable/ic_map_white_24dp"
-            app:tint="#8a000000" />
+            app:tint="@color/iconTint" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switch_gmaps_navigation"
@@ -101,7 +100,7 @@
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
             app:srcCompat="@drawable/ic_view_agenda_white_24dp"
-            app:tint="#8a000000" />
+            app:tint="@color/iconTint" />
 
         <TextView
             android:layout_width="0dp"
@@ -131,7 +130,7 @@
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
             app:srcCompat="@drawable/ic_delete_sweep_black_24dp"
-            app:tint="#8a000000" />
+            app:tint="@color/iconTint" />
 
         <TextView
             android:layout_width="0dp"
@@ -159,7 +158,7 @@
             android:layout_height="24dp"
             android:layout_marginEnd="32dp"
             app:srcCompat="@drawable/ic_bug_report_black_24dp"
-            app:tint="#8a000000" />
+            app:tint="@color/iconTint" />
 
         <TextView
             android:layout_width="0dp"

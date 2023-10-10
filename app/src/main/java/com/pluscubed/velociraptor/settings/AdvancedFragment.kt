@@ -15,7 +15,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.pluscubed.velociraptor.BuildConfig
@@ -149,29 +149,27 @@ class AdvancedFragment : Fragment() {
                         gmapsOnlyNavigationSwitch.isChecked
                 )
             } else {
-                context?.let {
-                    MaterialDialog(it)
-                            .show {
-                                message(R.string.gmaps_only_nav_notif_access)
-                                positiveButton(R.string.grant) {
-                                    try {
-                                        val settingsAction =
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1)
-                                                    Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS
-                                                else
-                                                    "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"
-                                        val intent = Intent(settingsAction)
-                                        startActivity(intent)
-                                    } catch (ignored: ActivityNotFoundException) {
-                                        Snackbar.make(
-                                                view,
-                                                R.string.open_settings_failed_notif_access,
-                                                Snackbar.LENGTH_LONG
-                                        ).show()
-                                    }
-                                }
-                            }
-                }
+                if (context == null) return@setOnClickListener
+                MaterialAlertDialogBuilder(requireContext())
+                    .setMessage(R.string.gmaps_only_nav_notif_access)
+                    .setPositiveButton(R.string.grant) { _, _ ->
+                        try {
+                            val settingsAction =
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1)
+                                    Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS
+                                else
+                                    "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"
+                            val intent = Intent(settingsAction)
+                            startActivity(intent)
+                        } catch (ignored: ActivityNotFoundException) {
+                            Snackbar.make(
+                                view,
+                                R.string.open_settings_failed_notif_access,
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                    .show()
             }
         }
     }

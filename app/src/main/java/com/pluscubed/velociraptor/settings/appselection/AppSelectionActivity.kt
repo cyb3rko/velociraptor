@@ -42,7 +42,6 @@ class AppSelectionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAppselectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
 
         adapter = AppAdapter()
         binding.recyclerview.let {

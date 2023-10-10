@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.text.parseAsHtml
 import androidx.fragment.app.Fragment
-import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.pluscubed.velociraptor.R
 import com.pluscubed.velociraptor.databinding.FragmentProvidersBinding
 import com.pluscubed.velociraptor.utils.Utils
@@ -40,29 +40,19 @@ class ProvidersFragment : Fragment() {
         }
 
         binding.osmEditdata.setOnClickListener {
-            activity?.let { activity ->
-                MaterialDialog(activity)
-                        .show {
-                            var text = getString(R.string.osm_edit)
-                            if (text.contains("%s")) {
-                                text = text.format("<b>$OSM_EDITDATA_URL</b>")
-                            }
-                            message(text = text.parseAsHtml()) {
-                                lineSpacing(1.2f)
-                            }
-                            positiveButton(R.string.share_link) { _ ->
-                                val shareIntent = Intent()
-                                shareIntent.type = "text/plain"
-                                shareIntent.putExtra(Intent.EXTRA_TEXT, OSM_EDITDATA_URL)
-                                startActivity(
-                                        Intent.createChooser(
-                                                shareIntent,
-                                                getString(R.string.share_link)
-                                        )
-                                )
-                            }
-                        }
-            }
+            val message = getString(R.string.osm_edit).replace("%s", "<b>$OSM_EDITDATA_URL</b>")
+            MaterialAlertDialogBuilder(requireActivity())
+                .setMessage(message.parseAsHtml())
+                .setPositiveButton(R.string.share_link) { _, _ ->
+                    Intent().let {
+                        it.type = "text/plain"
+                        it.putExtra(Intent.EXTRA_TEXT, OSM_EDITDATA_URL)
+                        startActivity(
+                            Intent.createChooser(it, getString(R.string.share_link))
+                        )
+                    }
+                }
+                .show()
         }
 
         binding.osmDonate.setOnClickListener { Utils.openLink(activity, view, OSM_DONATE_URL) }

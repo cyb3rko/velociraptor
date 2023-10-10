@@ -2,14 +2,10 @@ package com.pluscubed.velociraptor.settings
 
 import android.app.Dialog
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.widget.EditText
-import android.widget.SeekBar
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.customview.customView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.slider.Slider
 import com.pluscubed.velociraptor.R
 import com.pluscubed.velociraptor.databinding.DialogSizeBinding
 import com.pluscubed.velociraptor.utils.PrefUtils
@@ -30,82 +26,52 @@ class SizeDialogFragment : DialogFragment() {
         initialLimitSize = getSize(true)
         initialSpeedometerSize = getSize(false)
 
-        setup(true, binding.textPercentLimit, binding.edittextPercentLimit, binding.seekbarPercentLimit)
         setup(
-                false,
-                binding.textPercentSpeedometer,
-                binding.edittextPercentSpeedometer,
-                binding.seekbarPercentSpeedometer
+            true,
+            binding.textPercentLimit,
+            binding.sliderPercentLimit
+        )
+        setup(
+            false,
+            binding.textPercentSpeedometer,
+            binding.sliderPercentSpeedometer
         )
 
-        return MaterialDialog(activity!!)
-                .customView(view = binding.root, scrollable = true)
-                .title(R.string.size)
-                .negativeButton(android.R.string.cancel) {
-                    setSize(true, initialLimitSize)
-                    setSize(false, initialSpeedometerSize)
-                    Utils.updateFloatingServicePrefs(activity)
-                }
-                .positiveButton(android.R.string.ok)
+        return MaterialAlertDialogBuilder(requireActivity())
+            .setView(binding.root)
+            .setTitle(R.string.size)
+            .setPositiveButton(android.R.string.ok, null)
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+                setSize(true, initialLimitSize)
+                setSize(false, initialSpeedometerSize)
+                Utils.updateFloatingServicePrefs(activity)
+            }
+            .create()
     }
 
     private fun setup(
-            limit: Boolean,
-            percentText: TextView,
-            percentEditText: EditText,
-            percentSeekbar: SeekBar
+        limit: Boolean,
+        percentText: TextView,
+        percentSlider: Slider
     ) {
-        percentText.text = getString(R.string.percent, "")
-        percentEditText.setText((getSize(limit) * 100).toInt().toString())
-        percentEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-
+        val initialValue = getSize(limit) * 100
+        percentText.text = getString(R.string.percent, initialValue.toInt().toString())
+        percentSlider.value = initialValue
+        percentSlider.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) {
+                percentText.text = getString(R.string.percent, value.toInt().toString())
             }
+        }
+        percentSlider.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: Slider) {}
 
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-
-            }
-
-            override fun afterTextChanged(s: Editable) {
+            override fun onStopTrackingTouch(slider: Slider) {
                 try {
-                    val constant = Integer.parseInt(s.toString())
-                    percentSeekbar.progress = constant - 50
-                } catch (e: NumberFormatException) {
-                    percentSeekbar.progress = 50
-                }
-
-                try {
-                    setSize(
-                            limit,
-                            java.lang.Float.parseFloat(percentEditText.text.toString()) / 100f
-                    )
+                    setSize(limit, percentSlider.value / 100f)
                     Utils.updateFloatingServicePrefs(activity)
                 } catch (ignored: NumberFormatException) {
                 }
-
             }
-        })
-        percentSeekbar.progress = (getSize(limit) * 100).toInt() - 50
-        percentSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    percentEditText.setText((progress + 50).toString())
-
-                    try {
-                        setSize(
-                                limit,
-                                java.lang.Float.parseFloat(percentEditText.text.toString()) / 100f
-                        )
-                        Utils.updateFloatingServicePrefs(activity)
-                    } catch (ignored: NumberFormatException) {
-                    }
-
-                }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar) {}
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
     }
 

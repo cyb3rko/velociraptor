@@ -7,9 +7,10 @@ import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.parseAsHtml
 import androidx.fragment.app.Fragment
-import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.pluscubed.velociraptor.BuildConfig
 import com.pluscubed.velociraptor.R
@@ -121,39 +122,31 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun showAboutDialog() {
-        MaterialDialog(this)
-                .title(text = getString(R.string.about_dialog_title, BuildConfig.VERSION_NAME))
-                .positiveButton(R.string.dismiss)
-                .message(R.string.about_body) {
-                    html()
-                    lineSpacing(1.2f)
-                }
-                .neutralButton(R.string.licenses) {
-                    startActivity(
-                            Intent(this@SettingsActivity, OssLicensesMenuActivity::class.java)
-                    )
-                }
-                .negativeButton(R.string.terms) { showTermsDialog() }
-                .icon(R.mipmap.ic_launcher)
-                .show()
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.about_dialog_title, BuildConfig.VERSION_NAME))
+            .setMessage(getString(R.string.about_body).parseAsHtml())
+            .setPositiveButton(R.string.terms) { _, _ -> showTermsDialog() }
+            .setNegativeButton(R.string.licenses) { _, _ ->
+                startActivity(Intent(this@SettingsActivity, OssLicensesMenuActivity::class.java))
+            }
+            .setIcon(R.mipmap.ic_launcher)
+            .show()
     }
 
     private fun showTermsDialog() {
-        var dialog = MaterialDialog(this)
-                .message(R.string.terms_body) {
-                    html()
-                    lineSpacing(1.2f)
-                }
-                .neutralButton(R.string.privacy_policy) { Utils.openLink(this, binding.toolbar, PRIVACY_URL) }
+        var dialog = MaterialAlertDialogBuilder(this)
+            .setMessage(getString(R.string.terms_body).parseAsHtml())
+            .setNeutralButton(R.string.privacy_policy) { _, _ ->
+                Utils.openLink(this, binding.mainView, PRIVACY_URL)
+            }
 
         if (!PrefUtils.isTermsAccepted(this)) {
             dialog = dialog
-                    .noAutoDismiss()
-                    .cancelOnTouchOutside(false)
-                    .positiveButton(R.string.accept) {
-                        PrefUtils.setTermsAccepted(this@SettingsActivity, true)
-                        it.dismiss()
-                    }
+                .setCancelable(false)
+                .setPositiveButton(R.string.accept) { d, _ ->
+                    PrefUtils.setTermsAccepted(this@SettingsActivity, true)
+                    d.dismiss()
+                }
         }
 
         dialog.show()

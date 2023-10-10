@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingStart="@dimen/md_dialog_frame_margin_horizontal"
-    android:paddingEnd="@dimen/md_dialog_frame_margin_horizontal">
+    android:paddingStart="@dimen/dialog_horizontal_padding"
+    android:paddingEnd="@dimen/dialog_horizontal_padding">
 
     <View
         android:layout_width="0dp"
@@ -33,58 +35,55 @@
 
             <View
                 android:layout_width="2dp"
-                android:layout_height="8dp"
+                android:layout_height="12dp"
                 android:layout_gravity="center"
-                android:background="#000" />
+                android:background="@color/contextColor" />
 
-            <SeekBar
-                android:id="@+id/seekbar_percent"
+            <com.google.android.material.slider.Slider
+                android:id="@+id/slider_percent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:max="50" />
+                android:valueFrom="-25"
+                android:stepSize="1"
+                android:valueTo="25" />
 
         </FrameLayout>
 
-        <EditText
-            android:id="@+id/edittext_percent"
-            android:layout_width="48dp"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:importantForAutofill="no"
-            android:inputType="numberSigned" />
-
         <TextView
             android:id="@+id/text_percent"
-            android:layout_width="36dp"
+            android:layout_width="90dp"
+            android:gravity="center_horizontal"
             android:layout_height="wrap_content"
-            tools:text="%" />
+            tools:text="5%" />
 
     </LinearLayout>
 
-    <LinearLayout
+    <com.google.android.material.button.MaterialButtonToggleGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:paddingTop="8dp"
         android:paddingBottom="8dp"
-        android:paddingTop="8dp">
+        app:singleSelection="true"
+        app:selectionRequired="true">
 
-        <ToggleButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button_and"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="-5dp"
-            android:textOff="@string/plus"
-            android:textOn="@string/plus" />
+            android:text="@string/plus"
+            android:textAllCaps="true"
+            style="@style/Widget.Material3.Button.OutlinedButton" />
 
-        <ToggleButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/button_or"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="-5dp"
-            android:textOff="@string/or"
-            android:textOn="@string/or" />
+            android:text="@string/or"
+            android:textAllCaps="true"
+            style="@style/Widget.Material3.Button.OutlinedButton" />
 
-    </LinearLayout>
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -98,32 +97,26 @@
 
             <View
                 android:layout_width="2dp"
-                android:layout_height="8dp"
+                android:layout_height="12dp"
                 android:layout_gravity="center"
-                android:background="#000" />
+                android:background="@color/contextColor" />
 
-            <SeekBar
-                android:id="@+id/seekbar_constant"
+            <com.google.android.material.slider.Slider
+                android:id="@+id/slider_constant"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:max="50" />
+                android:valueFrom="-25"
+                android:stepSize="1"
+                android:valueTo="25" />
 
         </FrameLayout>
 
-
-        <EditText
-            android:id="@+id/edittext_constant"
-            android:layout_width="48dp"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:importantForAutofill="no"
-            android:inputType="numberSigned" />
-
         <TextView
             android:id="@+id/text_constant_unit"
-            android:layout_width="36dp"
+            android:layout_width="90dp"
+            android:gravity="center_horizontal"
             android:layout_height="wrap_content"
-            tools:text="mph" />
+            tools:text="5 km/h" />
 
     </LinearLayout>
 

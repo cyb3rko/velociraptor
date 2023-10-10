@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingStart="@dimen/md_dialog_frame_margin_horizontal"
-    android:paddingEnd="@dimen/md_dialog_frame_margin_horizontal">
+    android:paddingEnd="@dimen/dialog_horizontal_padding"
+    android:paddingStart="@dimen/dialog_horizontal_padding">
 
     <View
         android:layout_width="0dp"
@@ -18,27 +19,21 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical">
 
-
-        <SeekBar
-            android:id="@+id/seekbar_percent"
+        <com.google.android.material.slider.Slider
+            android:id="@+id/slider_percent"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:max="100" />
-
-        <EditText
-            android:id="@+id/edittext_percent"
-            android:layout_width="48dp"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:importantForAutofill="no"
-            android:inputType="numberSigned" />
+            android:stepSize="1"
+            android:valueFrom="1"
+            android:valueTo="100" />
 
         <TextView
             android:id="@+id/text_percent"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
-            tools:text="%" />
+            android:gravity="center_horizontal"
+            tools:text="100%" />
 
     </LinearLayout>
 

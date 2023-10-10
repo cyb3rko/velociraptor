@@ -44,10 +44,10 @@
 
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-            android:theme="@style/Theme.AppCompat.Light" />
+            android:theme="@style/Theme.Material3.DayNight" />
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
-            android:theme="@style/Theme.AppCompat.Light" />
+            android:theme="@style/Theme.Material3.DayNight" />
 
         <service
             android:name=".limit.LimitService"

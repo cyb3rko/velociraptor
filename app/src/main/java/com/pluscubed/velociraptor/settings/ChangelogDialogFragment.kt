@@ -10,8 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.webkit.WebView
 import androidx.fragment.app.DialogFragment
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.customview.customView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.pluscubed.velociraptor.R
 import com.pluscubed.velociraptor.utils.getColorResCompat
 import java.io.BufferedReader
@@ -23,17 +22,18 @@ class ChangelogDialogFragment : DialogFragment() {
     @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val customView = LayoutInflater.from(activity).inflate(R.layout.dialog_webview, null)
-        val dialog = MaterialDialog(activity!!)
-                .title(R.string.changelog)
-                .customView(view = customView)
-                .positiveButton(android.R.string.ok)
-                .neutralButton(R.string.rate) {
-                    val intent = Intent()
-                            .setAction(Intent.ACTION_VIEW)
-                            .setData(Uri.parse("https://play.google.com/store/apps/details?id=com.pluscubed.velociraptor"))
-                    startActivity(intent)
+        val dialog = MaterialAlertDialogBuilder(requireActivity())
+            .setView(customView)
+            .setTitle(R.string.changelog)
+            .setPositiveButton(android.R.string.ok, null)
+            .setNeutralButton(R.string.rate) { _, _ ->
+                Intent(Intent.ACTION_VIEW).let {
+                    it.data = Uri.parse("https://play.google.com/store/apps/details?id=com.pluscubed.velociraptor")
+                    startActivity(it)
                 }
-                //.negativeButton(R.string.support) { (activity as SettingsActivity).showSupportDialog() }
+            }
+            //.negativeButton(R.string.support) { (activity as SettingsActivity).showSupportDialog() }
+            .create()
 
         val webView = customView.findViewById<View>(R.id.webview) as WebView
         try {
