@@ -2,4 +2,5 @@
 <resources>
     <color name="contextColor">#FFFFFF</color>
     <color name="iconTint">#FFFFFF</color>
+    <color name="menuIconTint">#FFFFFF</color>
 </resources>

@@ -9,4 +9,5 @@
     <color name="red500">#f44336</color>
     <color name="contextColor">#000000</color>
     <color name="iconTint">#8a000000</color>
+    <color name="menuIconTint">#000000</color>
 </resources>

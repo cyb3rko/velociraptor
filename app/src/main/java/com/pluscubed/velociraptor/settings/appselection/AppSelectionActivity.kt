@@ -151,7 +151,7 @@ class AppSelectionActivity : AppCompatActivity() {
         var drawable = AppCompatResources.getDrawable(this, R.drawable.ic_map_white_24dp)!!.mutate()
         drawable = DrawableCompat.wrap(drawable)
         if (isMapsOnly) {
-            DrawableCompat.setTint(drawable, ContextCompat.getColor(this, R.color.colorAccent))
+            DrawableCompat.setTint(drawable, ContextCompat.getColor(this, R.color.colorPrimaryA200))
         }
         item.icon = drawable
         return true
