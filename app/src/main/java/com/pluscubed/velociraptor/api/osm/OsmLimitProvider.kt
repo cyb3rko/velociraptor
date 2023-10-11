@@ -3,12 +3,7 @@ package com.pluscubed.velociraptor.api.osm
 import android.content.Context
 import android.location.Location
 import android.net.Uri
-import android.os.Bundle
 import android.text.TextUtils
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.pluscubed.velociraptor.BuildConfig
 import com.pluscubed.velociraptor.api.LimitFetcher
 import com.pluscubed.velociraptor.api.LimitInterceptor
 import com.pluscubed.velociraptor.api.LimitProvider
@@ -22,7 +17,7 @@ import com.pluscubed.velociraptor.utils.Utils
 import okhttp3.OkHttpClient
 import timber.log.Timber
 import java.io.IOException
-import java.util.*
+import java.util.Locale
 
 class OsmLimitProvider(
         private val context: Context,
@@ -52,34 +47,6 @@ class OsmLimitProvider(
         endpoint.timeTaken = timeTaken
         osmOverpassApis.sort()
         Timber.d("Endpoints: %s", osmOverpassApis)
-    }
-
-    private fun refreshApiEndpoints() {
-        val remoteConfig = FirebaseRemoteConfig.getInstance()
-
-        val apisString = remoteConfig.getString(FB_CONFIG_OSM_APIS)
-
-        if (apisString.isEmpty()) {
-            return
-        }
-
-        val stringArray = apisString.replace("[", "").replace("]", "").split(",".toRegex())
-                .dropLastWhile { it.isEmpty() }.toTypedArray()
-
-        val existingUrls = HashSet<String>()
-        for (existing in osmOverpassApis) {
-            existingUrls.add(existing.baseUrl)
-        }
-
-        for (i in stringArray.indices) {
-            val apiHost = stringArray[i].replace("\"", "")
-            val enabled = remoteConfig.getBoolean(FB_CONFIG_OSM_API_ENABLED_PREFIX + i)
-            if (enabled && !existingUrls.contains(apiHost)) {
-                val endpoint = OsmApiEndpoint(apiHost)
-                initializeOsmService(endpoint)
-                osmOverpassApis.add(endpoint)
-            }
-        }
     }
 
     private fun buildQueryBody(location: Location): String {
@@ -239,33 +206,23 @@ class OsmLimitProvider(
     }
 
     private fun logOsmRequest(endpoint: OsmApiEndpoint) {
-        if (!BuildConfig.DEBUG) {
-            val endpointString = Uri.parse(endpoint.baseUrl).authority!!
-                    .replace(".", "_")
-                    .replace("-", "_")
-            val key = "osm_request_$endpointString"
-            FirebaseAnalytics.getInstance(context).logEvent(key, Bundle())
-        }
+        val endpointString = Uri.parse(endpoint.baseUrl).authority!!
+            .replace(".", "_")
+            .replace("-", "_")
+        Timber.d("Request to %s", endpointString)
     }
 
     private fun logOsmError(endpoint: OsmApiEndpoint, throwable: Throwable) {
-        if (!BuildConfig.DEBUG) {
-            if (throwable is IOException) {
-                val endpointString = Uri.parse(endpoint.baseUrl).authority!!
-                        .replace(".", "_")
-                        .replace("-", "_")
-                val key = "osm_error_$endpointString"
-                FirebaseAnalytics.getInstance(context).logEvent(key, Bundle())
-            }
-
-            FirebaseCrashlytics.getInstance().recordException(throwable)
+        if (throwable is IOException) {
+            val endpointString = Uri.parse(endpoint.baseUrl).authority!!
+                .replace(".", "_")
+                .replace("-", "_")
+            Timber.e("OSM Error at %s", endpointString)
         }
+        throwable.printStackTrace()
     }
 
     companion object {
-        const val FB_CONFIG_OSM_APIS = "osm_apis"
-        const val FB_CONFIG_OSM_API_ENABLED_PREFIX = "osm_api"
-
         const val OSM_RADIUS = 15
         const val ROADNAME_DELIM = "`"
     }
@@ -281,8 +238,6 @@ class OsmLimitProvider(
         }
         val endpoint = OsmApiEndpoint(endpointUrl)
         initializeOsmService(endpoint)
-        osmOverpassApis.add(endpoint)
-        refreshApiEndpoints()
     }
 
 }

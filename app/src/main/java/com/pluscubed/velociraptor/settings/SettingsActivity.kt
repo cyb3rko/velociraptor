@@ -11,7 +11,6 @@ import androidx.core.text.parseAsHtml
 import androidx.fragment.app.Fragment
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.pluscubed.velociraptor.BuildConfig
 import com.pluscubed.velociraptor.R
 import com.pluscubed.velociraptor.databinding.ActivitySettingsBinding
@@ -181,7 +180,7 @@ class SettingsActivity : AppCompatActivity() {
         try {
             startService(intent)
         } catch (e: Exception) {
-            FirebaseCrashlytics.getInstance().recordException(e)
+            e.printStackTrace()
         }
     }
 

@@ -17,7 +17,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.pluscubed.velociraptor.BuildConfig
 import com.pluscubed.velociraptor.R
 import com.pluscubed.velociraptor.api.cache.CacheLimitProvider
@@ -113,8 +112,8 @@ class AdvancedFragment : Fragment() {
                         Snackbar.LENGTH_SHORT
                     ).show()
                 } catch (e: Exception) {
+                    e.printStackTrace()
                     Snackbar.make(it, "Error: $e", Snackbar.LENGTH_SHORT).show()
-                    FirebaseCrashlytics.getInstance().recordException(e)
                 }
             }
         }

@@ -2,8 +2,6 @@ package com.pluscubed.velociraptor
 
 import android.app.Application
 import com.bumptech.glide.Glide
-import com.google.firebase.FirebaseApp
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.pluscubed.velociraptor.settings.appselection.AppInfo
 import com.pluscubed.velociraptor.settings.appselection.AppInfoIconLoader
 import com.pluscubed.velociraptor.settings.appselection.SelectedAppDatabase
@@ -19,11 +17,6 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
-        val crashlytics = FirebaseCrashlytics.getInstance()
-        crashlytics.setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG)
-
-        FirebaseApp.initializeApp(this)
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
@@ -44,7 +37,6 @@ class App : Application() {
                     PrefUtils.setApps(this@App, mapApps.toHashSet())
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    FirebaseCrashlytics.getInstance().recordException(e)
                 }
             }
         }

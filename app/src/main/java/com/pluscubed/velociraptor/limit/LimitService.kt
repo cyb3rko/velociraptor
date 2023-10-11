@@ -17,7 +17,6 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.*
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.pluscubed.velociraptor.BuildConfig
 import com.pluscubed.velociraptor.R
 import com.pluscubed.velociraptor.api.LimitFetcher
@@ -133,13 +132,6 @@ class LimitService : LifecycleService() {
                     Looper.myLooper()
             )
         } catch (unlikely: SecurityException) {
-        }
-
-        val remoteConfig = FirebaseRemoteConfig.getInstance()
-        remoteConfig.fetch().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                remoteConfig.activate()
-            }
         }
 
         return super.onStartCommand(intent, flags, startId)

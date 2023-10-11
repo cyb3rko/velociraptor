@@ -16,7 +16,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.pluscubed.velociraptor.R
 import com.pluscubed.velociraptor.databinding.ActivityAppselectionBinding
 import com.pluscubed.velociraptor.detection.AppDetectionService
@@ -117,7 +116,6 @@ class AppSelectionActivity : AppCompatActivity() {
             isLoadingAllApps = false
         } catch (e: Exception) {
             e.printStackTrace()
-            FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
 
@@ -141,7 +139,6 @@ class AppSelectionActivity : AppCompatActivity() {
             isLoadingMapApps = false
         } catch (e: Exception) {
             e.printStackTrace()
-            FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
 

@@ -9,7 +9,6 @@ import android.view.accessibility.AccessibilityEvent;
 
 import androidx.core.util.Pair;
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.pluscubed.velociraptor.BuildConfig;
 import com.pluscubed.velociraptor.limit.LimitService;
 import com.pluscubed.velociraptor.utils.LimitedSizeQueue;
@@ -117,7 +116,7 @@ public class AppDetectionService extends AccessibilityService {
         try {
             startService(intent);
         } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().recordException(e);
+            e.printStackTrace();
         }
     }
 
@@ -126,7 +125,7 @@ public class AppDetectionService extends AccessibilityService {
             return getPackageManager().getActivityInfo(componentName, 0);
         } catch (PackageManager.NameNotFoundException ignore) {
         } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().recordException(e);
+            e.printStackTrace();
         }
         return null;
     }
