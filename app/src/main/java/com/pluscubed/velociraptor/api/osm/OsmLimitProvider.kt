@@ -3,7 +3,6 @@ package com.pluscubed.velociraptor.api.osm
 import android.content.Context
 import android.location.Location
 import android.net.Uri
-import android.text.TextUtils
 import com.pluscubed.velociraptor.api.LimitFetcher
 import com.pluscubed.velociraptor.api.LimitInterceptor
 import com.pluscubed.velociraptor.api.LimitProvider
@@ -24,29 +23,24 @@ class OsmLimitProvider(
         private val client: OkHttpClient,
         private val cacheLimitProvider: CacheLimitProvider
 ) : LimitProvider {
+    private lateinit var endpoint: OsmApiEndpoint
 
-    private val osmOverpassApis: MutableList<OsmApiEndpoint>
-
-    private fun initializeOsmService(endpoint: OsmApiEndpoint) {
+    private fun initializeOsmService() {
+        endpoint = OsmApiEndpoint(ENDPOINT_URL)
         val osmInterceptor = LimitInterceptor(object : LimitInterceptor.Callback() {
             override fun updateTimeTaken(timeTaken: Int) {
                 updateEndpointTimeTaken(timeTaken, endpoint)
             }
         })
-
         val osmClient = client.newBuilder()
-                .addInterceptor(osmInterceptor)
-                .build()
-        val osmRest = LimitFetcher.buildRetrofit(osmClient, endpoint.baseUrl)
-
-        val osmService = osmRest.create(OsmService::class.java)
-        endpoint.service = osmService
+            .addInterceptor(osmInterceptor)
+            .build()
+        val osmRest = LimitFetcher.buildRetrofit(osmClient, ENDPOINT_URL)
+        endpoint.service = osmRest.create(OsmService::class.java)
     }
 
     private fun updateEndpointTimeTaken(timeTaken: Int, endpoint: OsmApiEndpoint) {
         endpoint.timeTaken = timeTaken
-        osmOverpassApis.sort()
-        Timber.d("Endpoints: %s", osmOverpassApis)
     }
 
     private fun buildQueryBody(location: Location): String {
@@ -61,23 +55,15 @@ class OsmLimitProvider(
     }
 
     private fun getOsmResponse(location: Location): OsmResponse {
-        val selectedEndpoint: OsmApiEndpoint
-        if (Math.random() < 0.7) {
-            //Select the fastest endpoint most of the time
-            selectedEndpoint = osmOverpassApis[0]
-        } else {
-            //Select a random endpoint 30% of the time to "correct" for anomalies
-            selectedEndpoint = osmOverpassApis[(Math.random() * osmOverpassApis.size).toInt()]
-        }
         try {
             val osmNetworkResponse =
-                    selectedEndpoint.service!!.getOsm(buildQueryBody(location)).execute()
-            logOsmRequest(selectedEndpoint)
+                    endpoint.service!!.getOsm(buildQueryBody(location)).execute()
+            logOsmRequest(endpoint)
             return Utils.getResponseBody(osmNetworkResponse)
         } catch (e: Exception) {
             //catch any errors, rethrow
-            updateEndpointTimeTaken(Integer.MAX_VALUE, selectedEndpoint)
-            logOsmError(selectedEndpoint, e)
+            updateEndpointTimeTaken(Integer.MAX_VALUE, endpoint)
+            logOsmError(endpoint, e)
             throw e
         }
     }
@@ -93,7 +79,7 @@ class OsmLimitProvider(
                 origin = LimitResponse.ORIGIN_OSM,
                 debugInfo = (
                         if (debuggingEnabled)
-                            "\nOSM Info:\n--" + TextUtils.join("\n--", osmOverpassApis)
+                            "\nOSM Info:${endpoint.baseUrl}"
                         else
                             ""
                         )
@@ -223,21 +209,13 @@ class OsmLimitProvider(
     }
 
     companion object {
+        const val ENDPOINT_URL = "https://overpass.kumi.systems/api/"
         const val OSM_RADIUS = 15
         const val ROADNAME_DELIM = "`"
     }
 
     init {
-        osmOverpassApis = ArrayList()
-        var endpointUrl = "https://overpass.kumi.systems/api/"
-        val resId = context.resources.getIdentifier("overpass_api", "string", context.packageName)
-        if (resId != 0) {
-            endpointUrl = context.getString(resId)
-        } else {
-            Timber.d("Private overpass_api not set")
-        }
-        val endpoint = OsmApiEndpoint(endpointUrl)
-        initializeOsmService(endpoint)
+        initializeOsmService()
     }
 
 }
