@@ -18,17 +18,16 @@ import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import com.pluscubed.velociraptor.R
 import com.pluscubed.velociraptor.utils.PrefUtils
 import com.pluscubed.velociraptor.utils.Utils
-import devlight.io.library.ArcProgressStackView
 import com.google.android.material.R as MaterialR
 import java.util.*
 
 class FloatingView(private val service: LimitService) : LimitView {
     private lateinit var limitView: View
-    private lateinit var limitLabelText: TextView
+    private var limitLabelText: TextView? = null
     private lateinit var limitText: TextView
     private lateinit var limitSourceText: TextView
     private lateinit var speedometerView: View
-    private lateinit var arcView: ArcProgressStackView
+    private lateinit var arcView: ArcProgressView
     private lateinit var speedometerText: TextView
     private lateinit var speedometerUnitsText: TextView
 
@@ -85,8 +84,11 @@ class FloatingView(private val service: LimitService) : LimitView {
         floatingView = LayoutInflater.from(ContextThemeWrapper(service, R.style.Theme_Velociraptor_Light))
                 .inflate(layout, null, false)
 
+        if (layout == R.layout.floating_region_us) {
+            limitLabelText = floatingView.findViewById(R.id.limit_label_text)
+        }
+
         limitView = floatingView.findViewById(R.id.limit)
-        limitLabelText = floatingView.findViewById(R.id.limit_label_text)
         limitText = floatingView.findViewById(R.id.limit_text)
         limitSourceText = floatingView.findViewById(R.id.limit_source_text)
         speedometerView = floatingView.findViewById(R.id.speedometer)
@@ -113,9 +115,9 @@ class FloatingView(private val service: LimitService) : LimitView {
 
         initMonitorPosition()
 
-        val models = ArrayList<ArcProgressStackView.Model>()
+        val models = ArrayList<ArcProgressView.Model>()
         models.add(
-                ArcProgressStackView.Model(
+                ArcProgressView.Model(
                         "", 0f,
                         ContextCompat.getColor(service, R.color.colorPrimary800),
                         ContextCompat.getColor(service, R.color.colorAccent)
