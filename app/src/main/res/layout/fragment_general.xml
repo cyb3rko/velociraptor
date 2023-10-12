@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,8 +15,8 @@
         android:baselineAligned="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="16dp"
         android:paddingEnd="12dp"
+        android:paddingStart="16dp"
         tools:ignore="UseCompoundDrawables">
 
         <ImageView
@@ -55,8 +56,8 @@
         android:baselineAligned="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="16dp"
         android:paddingEnd="12dp"
+        android:paddingStart="16dp"
         tools:ignore="UseCompoundDrawables">
 
         <ImageView
@@ -96,8 +97,8 @@
         android:baselineAligned="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="16dp"
         android:paddingEnd="12dp"
+        android:paddingStart="16dp"
         tools:ignore="UseCompoundDrawables">
 
         <ImageView
@@ -121,8 +122,8 @@
             android:layout_height="match_parent" />
 
         <Button
-            android:id="@+id/button_test_beep"
             style="@style/Widget.Material3.Button.TextButton"
+            android:id="@+id/button_test_beep"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="0dp"
@@ -146,8 +147,8 @@
         android:baselineAligned="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="16dp"
         android:paddingEnd="12dp"
+        android:paddingStart="16dp"
         tools:ignore="RtlSymmetry,UseCompoundDrawables">
 
         <ImageView
@@ -185,8 +186,8 @@
         android:baselineAligned="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="16dp"
         android:paddingEnd="12dp"
+        android:paddingStart="16dp"
         tools:ignore="RtlSymmetry,UseCompoundDrawables">
 
         <ImageView
@@ -255,7 +256,6 @@
             tools:ignore="RtlSymmetry"
             tools:text="Speed Limit: 100%\nSpeedometer: 100%" />
 
-
     </LinearLayout>
 
     <LinearLayout
@@ -295,7 +295,6 @@
             tools:ignore="RtlSymmetry"
             tools:text="50%" />
 
-
     </LinearLayout>
 
     <LinearLayout
@@ -334,7 +333,6 @@
             android:textSize="16sp"
             tools:ignore="RtlSymmetry"
             tools:text="25mph + 5%" />
-
 
     </LinearLayout>
 

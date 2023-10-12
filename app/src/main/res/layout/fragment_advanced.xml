@@ -39,13 +39,13 @@
             android:layout_width="8dp"
             android:layout_height="match_parent" />
 
-
         <Button
-            android:id="@+id/button_app_selection"
             style="@style/Widget.Material3.Button.TextButton"
+            android:id="@+id/button_app_selection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/configure" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -56,8 +56,8 @@
         android:gravity="center_vertical"
         android:minHeight="56dp"
         android:orientation="horizontal"
-        android:paddingStart="16dp"
         android:paddingEnd="12dp"
+        android:paddingStart="16dp"
         tools:ignore="UseCompoundDrawables">
 
         <ImageView
@@ -80,7 +80,6 @@
             tools:ignore="RtlSymmetry" />
 
     </LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/switch_notif_controls"
@@ -121,8 +120,8 @@
         android:gravity="center_vertical"
         android:minHeight="56dp"
         android:orientation="horizontal"
-        android:paddingStart="16dp"
         android:paddingEnd="16dp"
+        android:paddingStart="16dp"
         tools:ignore="UseCompoundDrawables">
 
         <ImageView
@@ -149,8 +148,8 @@
         android:baselineAligned="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="16dp"
         android:paddingEnd="12dp"
+        android:paddingStart="16dp"
         tools:ignore="UseCompoundDrawables">
 
         <ImageView
@@ -182,4 +181,5 @@
             android:focusable="false" />
 
     </LinearLayout>
+
 </LinearLayout>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -34,16 +35,16 @@
         android:baselineAligned="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="16dp"
         android:paddingEnd="12dp"
+        android:paddingStart="16dp"
         tools:ignore="UseCompoundDrawables">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="16dp"
-            android:paddingBottom="4dp">
+            android:paddingBottom="4dp"
+            android:paddingTop="16dp">
 
             <TextView
                 android:id="@+id/osm_title"
@@ -72,24 +73,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:paddingBottom="8dp"
         android:paddingLeft="12dp"
-        android:paddingRight="12dp"
-        android:paddingBottom="8dp">
+        android:paddingRight="12dp">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/osm_editdata"
             style="@style/Widget.Material3.Button.TextButton"
+            android:id="@+id/osm_editdata"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/edit_data" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/osm_coverage"
-            android:visibility="gone"
             style="@style/Widget.Material3.Button.TextButton"
+            android:id="@+id/osm_coverage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/coverage" />
+            android:text="@string/coverage"
+            android:visibility="gone" />
 
         <Space
             android:layout_width="0dp"
@@ -97,8 +98,8 @@
             android:layout_weight="1" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/osm_donate"
             style="@style/Widget.Material3.Button.OutlinedButton"
+            android:id="@+id/osm_donate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/donate" />

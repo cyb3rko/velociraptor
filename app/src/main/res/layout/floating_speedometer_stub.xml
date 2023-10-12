@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/speedometer"
     android:layout_width="64dp"
     android:layout_height="64dp"
+    android:background="@drawable/circle"
+    android:elevation="2dp"
     android:layout_below="@id/limit"
     android:layout_centerHorizontal="true"
     android:layout_margin="8dp"
-    android:background="@drawable/circle"
-    android:elevation="2dp"
     tools:showIn="@layout/floating_region_us">
 
     <com.pluscubed.velociraptor.limit.ArcProgressView
@@ -35,8 +36,8 @@
             android:id="@+id/speed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:includeFontPadding="false"
+            android:layout_gravity="center_horizontal"
             android:maxLines="1"
             android:text="--"
             android:textColor="?android:textColorPrimary"
@@ -46,8 +47,8 @@
             android:id="@+id/speedUnits"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:includeFontPadding="false"
+            android:layout_gravity="center"
             android:textColor="?android:textColorPrimary"
             android:textSize="12sp"
             tools:text="km/h" />

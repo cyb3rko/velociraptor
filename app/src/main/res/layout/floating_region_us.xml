@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
@@ -37,37 +38,38 @@
                 android:id="@+id/limit_label_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:gravity="center"
+                android:layout_gravity="center_horizontal"
                 android:text="SPEED\nLIMIT"
                 android:textColor="?android:textColorPrimary"
                 android:textStyle="bold"
-                tools:textSize="12dp" />
+                tools:textSize="12sp" />
 
             <TextView
                 android:id="@+id/limit_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:includeFontPadding="false"
+                android:layout_gravity="center_horizontal"
                 android:text="--"
                 android:textColor="?android:textColorPrimary"
-                tools:textSize="28dp" />
+                tools:textSize="28sp" />
 
             <TextView
                 android:id="@+id/limit_source_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:background="?colorSurface"
                 android:includeFontPadding="false"
+                android:layout_gravity="center_horizontal"
                 android:textColor="?android:textColorPrimary"
                 tools:text="HERE"
-                tools:textSize="8dp" />
+                tools:textSize="8sp" />
 
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
 
     <include layout="@layout/floating_speedometer_stub" />
+
 </RelativeLayout>

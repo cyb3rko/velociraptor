@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -45,8 +46,8 @@
                 android:id="@+id/image_floating_enabled"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginEnd="16dp"
                 android:contentDescription="@null"
+                android:layout_marginEnd="16dp"
                 tools:src="@drawable/ic_cross_red_40dp" />
 
             <TextView
@@ -62,8 +63,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textColor="#FFFFFF"
-            android:text="@string/open_settings_page" />
+            android:text="@string/open_settings_page"
+            android:textColor="#FFFFFF" />
 
         <Space
             android:layout_width="match_parent"
@@ -84,8 +85,8 @@
                 android:id="@+id/image_location_enabled"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginEnd="16dp"
                 android:contentDescription="@null"
+                android:layout_marginEnd="16dp"
                 tools:src="@drawable/ic_cross_red_40dp" />
 
             <TextView
@@ -101,8 +102,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:textColor="#FFFFFF"
-            android:text="@string/grant_permission" />
+            android:text="@string/grant_permission"
+            android:textColor="#FFFFFF" />
 
         <Space
             android:layout_width="match_parent"
@@ -125,8 +126,8 @@
             android:id="@+id/image_service_enabled"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginEnd="16dp"
             android:contentDescription="@null"
+            android:layout_marginEnd="16dp"
             tools:src="@drawable/ic_cross_red_40dp" />
 
         <TextView
@@ -142,8 +143,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:textColor="#FFFFFF"
-        android:text="@string/enable_accessibility_service" />
+        android:text="@string/enable_accessibility_service"
+        android:textColor="#FFFFFF" />
 
     <Space
         android:layout_width="match_parent"
@@ -155,8 +156,8 @@
         android:baselineAligned="false"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="16dp"
         android:paddingEnd="12dp"
+        android:paddingStart="16dp"
         tools:ignore="UseCompoundDrawables">
 
         <ImageView
@@ -176,8 +177,8 @@
             tools:ignore="RtlSymmetry" />
 
         <Button
-            android:id="@+id/button_troubleshoot"
             style="@style/Widget.Material3.Button.TextButton"
+            android:id="@+id/button_troubleshoot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/troubleshoot" />

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
@@ -12,9 +13,9 @@
         android:id="@+id/limit"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_margin="8dp"
         android:background="@drawable/floating_background_international"
-        android:elevation="2dp">
+        android:elevation="2dp"
+        android:layout_margin="8dp">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/limit_text"
@@ -32,8 +33,8 @@
             android:id="@+id/limit_source_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|bottom"
             android:includeFontPadding="false"
+            android:layout_gravity="center_horizontal|bottom"
             android:textColor="?android:textColorPrimaryInverse"
             tools:text="HERE"
             tools:textSize="8dp" />
