@@ -22,7 +22,6 @@
         android:label="${appName}"
         android:supportsRtl="true"
         android:theme="@style/Theme.Velociraptor"
-        android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:label">
 
