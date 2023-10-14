@@ -24,92 +24,117 @@
 
     </LinearLayout>
 
+    <!--Draw Over Other Apps-->
+
     <LinearLayout
-        android:id="@+id/card_m_permissions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        tools:ignore="UseCompoundDrawables">
 
-        <!--Draw Over Other Apps-->
+        <ImageView
+            android:id="@+id/image_floating_enabled"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:contentDescription="@null"
+            android:layout_marginEnd="16dp"
+            tools:src="@drawable/ic_cross_red_40dp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            tools:ignore="UseCompoundDrawables">
-
-            <ImageView
-                android:id="@+id/image_floating_enabled"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:contentDescription="@null"
-                android:layout_marginEnd="16dp"
-                tools:src="@drawable/ic_cross_red_40dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/enable_floating_desc"
-                android:textSize="16sp" />
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/button_floating_enabled"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/open_settings_page"
-            android:textColor="#FFFFFF" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="16dp" />
-
-        <!--Access location-->
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            tools:ignore="UseCompoundDrawables">
-
-            <ImageView
-                android:id="@+id/image_location_enabled"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:contentDescription="@null"
-                android:layout_marginEnd="16dp"
-                tools:src="@drawable/ic_cross_red_40dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/enable_location_desc"
-                android:textSize="16sp" />
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/button_location_enabled"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/grant_permission"
-            android:textColor="#FFFFFF" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="16dp" />
+            android:text="@string/enable_floating_desc"
+            android:textSize="16sp" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/button_floating_enabled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/open_settings_page"
+        android:textColor="#FFFFFF" />
+
+    <!--Access location-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:layout_marginTop="16dp"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:id="@+id/image_location_enabled"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:contentDescription="@null"
+            android:layout_marginEnd="16dp"
+            tools:src="@drawable/ic_cross_red_40dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enable_location_desc"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_location_enabled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/grant_permission"
+        android:textColor="#FFFFFF" />
+
+    <!--Notification permission-->
+
+    <LinearLayout
+        android:id="@+id/notifications_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        tools:ignore="UseCompoundDrawables"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/image_notifications_enabled"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:contentDescription="@null"
+            android:layout_marginEnd="16dp"
+            tools:src="@drawable/ic_cross_red_40dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enable_notifications_desc"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_enable_notifications"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:visibility="gone"
+        android:text="@string/enable_notifications"
+        android:textColor="#FFFFFF"
+        tools:visibility="visible" />
 
     <!--Accessibility Service-->
 
@@ -120,6 +145,7 @@
         android:orientation="horizontal"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
+        android:layout_marginTop="16dp"
         tools:ignore="UseCompoundDrawables">
 
         <ImageView
@@ -146,10 +172,6 @@
         android:text="@string/enable_accessibility_service"
         android:textColor="#FFFFFF" />
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="8dp" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -158,6 +180,7 @@
         android:orientation="horizontal"
         android:paddingEnd="12dp"
         android:paddingStart="16dp"
+        android:layout_marginTop="8dp"
         tools:ignore="UseCompoundDrawables">
 
         <ImageView

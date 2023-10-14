@@ -12,11 +12,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
+import com.livinglifetechway.quickpermissionskotlin.runWithPermissions
 import com.pluscubed.velociraptor.BuildConfig
 import com.pluscubed.velociraptor.R
 import com.pluscubed.velociraptor.databinding.FragmentPermissionsBinding
 import com.pluscubed.velociraptor.detection.AppDetectionService
 import com.pluscubed.velociraptor.utils.Utils
+import timber.log.Timber
 
 class PermissionsFragment : Fragment() {
     private var _binding: FragmentPermissionsBinding? = null
@@ -37,8 +39,14 @@ class PermissionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            binding.cardMPermissions.visibility = View.GONE
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            binding.buttonEnableNotifications.setOnClickListener {
+                runWithPermissions(Manifest.permission.POST_NOTIFICATIONS) {
+                    Timber.d("Notification permission granted")
+                }
+            }
+            binding.notificationsLayout.visibility = View.VISIBLE
+            binding.buttonEnableNotifications.visibility = View.VISIBLE
         }
 
         binding.buttonTroubleshoot.setOnClickListener {
@@ -71,10 +79,9 @@ class PermissionsFragment : Fragment() {
         }
 
         binding.buttonLocationEnabled.setOnClickListener {
-            requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                REQUEST_LOCATION
-            )
+            runWithPermissions(Manifest.permission.ACCESS_FINE_LOCATION) {
+                Timber.d("Notification permission granted")
+            }
         }
     }
 
@@ -85,27 +92,46 @@ class PermissionsFragment : Fragment() {
 
     private fun invalidateStates() {
         val permissionGranted = Utils.isLocationPermissionGranted(activity)
-        binding.imageLocationEnabled.setImageResource(if (permissionGranted) R.drawable.ic_done_green_40dp else R.drawable.ic_cross_red_40dp)
+        binding.imageLocationEnabled.setImageResource(
+            if (permissionGranted) {
+                R.drawable.ic_done_green_40dp
+            } else {
+                R.drawable.ic_cross_red_40dp
+            }
+        )
         binding.buttonLocationEnabled.isEnabled = !permissionGranted
 
-        val overlayEnabled =
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(activity)
-        binding.imageFloatingEnabled.setImageResource(if (overlayEnabled) R.drawable.ic_done_green_40dp else R.drawable.ic_cross_red_40dp)
+        val overlayEnabled = Settings.canDrawOverlays(activity)
+        binding.imageFloatingEnabled.setImageResource(
+            if (overlayEnabled) {
+                R.drawable.ic_done_green_40dp
+            } else {
+                R.drawable.ic_cross_red_40dp
+            }
+        )
         binding.buttonFloatingEnabled.isEnabled = !overlayEnabled
 
         val serviceEnabled =
                 Utils.isAccessibilityServiceEnabled(activity, AppDetectionService::class.java)
         binding.imageServiceEnabled.setImageResource(if (serviceEnabled) R.drawable.ic_done_green_40dp else R.drawable.ic_cross_red_40dp)
         binding.buttonEnableService.isEnabled = !serviceEnabled
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            val notificationsAllowed = Utils.isNotificationPermissionGranted(activity)
+            binding.imageNotificationsEnabled.setImageResource(
+                if (notificationsAllowed) {
+                    R.drawable.ic_done_green_40dp
+                } else {
+                    R.drawable.ic_cross_red_40dp
+                }
+            )
+            binding.buttonEnableNotifications.isEnabled = !notificationsAllowed
+        }
     }
 
     private fun openSettings(settingsAction: String, packageName: String) {
         val intent = Intent(settingsAction)
         intent.data = Uri.parse("package:$packageName")
         startActivity(intent)
-    }
-
-    companion object {
-        private const val REQUEST_LOCATION = 105
     }
 }

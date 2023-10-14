@@ -136,6 +136,16 @@ object Utils {
         return false
     }
 
+    fun isNotificationPermissionGranted(context: Context?): Boolean {
+        if (context != null) {
+            return ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+        return false
+    }
+
     fun isNetworkConnected(context: Context): Boolean {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = cm.activeNetworkInfo

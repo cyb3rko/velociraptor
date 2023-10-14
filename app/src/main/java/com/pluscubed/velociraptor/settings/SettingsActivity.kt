@@ -1,11 +1,11 @@
 package com.pluscubed.velociraptor.settings
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.parseAsHtml
 import androidx.fragment.app.Fragment
@@ -80,11 +80,14 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        if (BuildConfig.VERSION_CODE > PrefUtils.getVersionCode(this) && !PrefUtils.isFirstRun(this)) {
+        if (BuildConfig.VERSION_CODE > PrefUtils.getVersionCode(this)
+            && !PrefUtils.isFirstRun(this)
+            && PrefUtils.isTermsAccepted(this)
+        ) {
             showChangelog()
         }
 
-        if (PrefUtils.getVersionCode(this) <= 39 || !PrefUtils.isTermsAccepted(this)) {
+        if (!PrefUtils.isTermsAccepted(this)) {
             showTermsDialog()
         }
 
@@ -133,21 +136,24 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun showTermsDialog() {
-        var dialog = MaterialAlertDialogBuilder(this)
+        var builder = MaterialAlertDialogBuilder(this)
             .setMessage(getString(R.string.terms_body).parseAsHtml())
-            .setNeutralButton(R.string.privacy_policy) { _, _ ->
-                Utils.openLink(this, binding.mainView, PRIVACY_URL)
-            }
+            .setNeutralButton(R.string.privacy_policy, null)
 
         if (!PrefUtils.isTermsAccepted(this)) {
-            dialog = dialog
+            builder = builder
                 .setCancelable(false)
                 .setPositiveButton(R.string.accept) { d, _ ->
                     PrefUtils.setTermsAccepted(this@SettingsActivity, true)
                     d.dismiss()
                 }
         }
-
+        val dialog = builder.create()
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {
+                Utils.openLink(this, binding.mainView, PRIVACY_URL)
+            }
+        }
         dialog.show()
     }
 
@@ -165,8 +171,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun invalidateStates() {
         val permissionGranted = Utils.isLocationPermissionGranted(this)
-        val overlayEnabled =
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this)
+        val overlayEnabled = Settings.canDrawOverlays(this)
         if (permissionGranted && overlayEnabled) {
             startLimitService(true)
         }

@@ -9,7 +9,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.location.Location
 import android.location.LocationManager
-import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import android.provider.Settings
@@ -58,7 +57,9 @@ class LimitService : LifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
-        startNotification()
+        if (Utils.isLocationPermissionGranted(applicationContext)) {
+            startNotification()
+        }
     }
 
     @SuppressLint("InflateParams")
@@ -174,9 +175,8 @@ class LimitService : LifecycleService() {
             dismissWarningNotification(R.string.terms_warning)
         }
 
-        if (!Utils.isLocationPermissionGranted(this@LimitService) ||
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                !Settings.canDrawOverlays(this)
+        if (!Utils.isLocationPermissionGranted(this@LimitService)
+            || !Settings.canDrawOverlays(this)
         ) {
             showWarningNotification(R.string.permissions_warning)
             stopSelf()
