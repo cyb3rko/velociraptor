@@ -25,15 +25,8 @@ object SelectedAppDatabase {
         val appInfos = ArrayList<AppInfo>()
         val gmmIntentUri = Uri.parse("geo:37.421999,-122.084056")
         val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-        val manager = context.packageManager
-        val mapApps: List<ResolveInfo>
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mapApps = manager.queryIntentActivities(mapIntent, PackageManager.MATCH_ALL)
-        } else {
-            mapApps = manager.queryIntentActivities(mapIntent, PackageManager.MATCH_DEFAULT_ONLY)
-        }
 
-        for (info in mapApps) {
+        for (info in context.packageManager.queryIntentActivities(mapIntent)) {
             val appInfo = AppInfo()
             appInfo.packageName = info.activityInfo.packageName
             appInfo.name = info.loadLabel(context.packageManager).toString()
@@ -46,16 +39,26 @@ object SelectedAppDatabase {
      * Returns sorted list of AppInfos (packageName, name)
      */
     fun getInstalledApps(context: Context): List<AppInfo> {
-        return context.packageManager.getInstalledApplications(0)
-                .map { applicationInfo ->
-                    val appInfo = AppInfo()
-                    appInfo.packageName = applicationInfo.packageName
-                    appInfo.name = applicationInfo.loadLabel(context.packageManager).toString()
-                    appInfo
+        val pm = context.packageManager
+        val mainIntent = Intent(Intent.ACTION_MAIN, null)
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+
+        return pm.queryIntentActivities(mainIntent)
+            .map {
+                AppInfo().apply {
+                    packageName = it.activityInfo.packageName
+                    name = it.activityInfo.applicationInfo.loadLabel(pm).toString()
                 }
-                .filter { appInfoEntity: AppInfo ->
-                    appInfoEntity.packageName != BuildConfig.APPLICATION_ID
-                }
-                .sorted()
+            }
+            .filter { it.packageName != BuildConfig.APPLICATION_ID }
+            .sorted()
+    }
+
+    private fun PackageManager.queryIntentActivities(intent: Intent): List<ResolveInfo> {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            this.queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(0))
+        } else {
+            this.queryIntentActivities(intent, 0)
+        }
     }
 }

@@ -41,7 +41,7 @@ android {
     defaultConfig {
         applicationId "com.pluscubed.velociraptor"
         minSdk 21
-        targetSdk 29
+        targetSdk 34
         versionCode 59
         versionName "1.7.2"
         vectorDrawables.useSupportLibrary = true

@@ -67,21 +67,27 @@ class AdvancedFragment : Fragment() {
             val intent = Intent(context, LimitService::class.java)
             intent.putExtra(LimitService.EXTRA_NOTIF_START, true)
             val pending = PendingIntent.getService(
-                    context,
-                    PENDING_SERVICE, intent, PendingIntent.FLAG_CANCEL_CURRENT
+                context,
+                PENDING_SERVICE,
+                intent,
+                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
             val intentClose = Intent(context, LimitService::class.java)
             intentClose.putExtra(LimitService.EXTRA_NOTIF_CLOSE, true)
             val pendingClose = PendingIntent.getService(
-                    context,
-                    PENDING_SERVICE_CLOSE, intentClose, PendingIntent.FLAG_CANCEL_CURRENT
+                context,
+                PENDING_SERVICE_CLOSE,
+                intentClose,
+                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
             val settings = Intent(context, SettingsActivity::class.java)
             val settingsIntent = PendingIntent.getActivity(
-                    context,
-                    PENDING_SETTINGS, settings, PendingIntent.FLAG_CANCEL_CURRENT
+                context,
+                PENDING_SETTINGS,
+                settings,
+                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
             NotificationUtils.initChannels(context)

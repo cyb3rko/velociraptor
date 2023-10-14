@@ -149,7 +149,7 @@ class LimitService : LifecycleService() {
                 this,
                 PENDING_SETTINGS,
                 notificationIntent,
-                PendingIntent.FLAG_CANCEL_CURRENT
+                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         NotificationUtils.initChannels(this)
@@ -346,7 +346,7 @@ class LimitService : LifecycleService() {
                 this,
                 PENDING_SETTINGS,
                 notificationIntent,
-                PendingIntent.FLAG_CANCEL_CURRENT
+                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         NotificationUtils.initChannels(this)
