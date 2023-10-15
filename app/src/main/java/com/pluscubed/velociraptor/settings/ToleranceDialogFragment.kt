@@ -25,19 +25,22 @@ class ToleranceDialogFragment : DialogFragment() {
         val orButton = binding.buttonOr
 
         val initialConstant = PrefUtils.getSpeedingConstant(activity)
-        binding.textConstantUnit.text =  Utils.getUnitText(activity!!, initialConstant.toString())
+        binding.textConstantUnit.text =  Utils.getUnitText(
+            requireActivity(),
+            initialConstant.toString()
+        )
         constantSlider.value = initialConstant.toFloat()
         constantSlider.addOnChangeListener { _, value, fromUser ->
             if (fromUser) {
                 binding.textConstantUnit.text = Utils.getUnitText(
-                    activity!!,
+                    requireActivity(),
                     value.toInt().toString()
                 )
             }
         }
 
         val initialPercent = PrefUtils.getSpeedingPercent(activity)
-        binding.textPercent.text = getString(R.string.percent, initialPercent)
+        binding.textPercent.text = getString(R.string.percent, initialPercent.toString())
         percentSlider.value = initialPercent.toFloat()
         percentSlider.addOnChangeListener { _, value, fromUser ->
             if (fromUser) {
