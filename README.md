@@ -1,21 +1,48 @@
-![Icon](./app/src/main/res/mipmap-mdpi/ic_launcher.png) Velociraptor
-=========
-Floating speed limit monitor for Android with speedometer and warning features.
+<p align="center">
+  <img alt="PINcredible" src="./app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" width="120"/>
+</p>
 
-[![Get it on Google Play](http://i.imgur.com/PeDVOwW.png)](https://play.google.com/store/apps/details?id=com.pluscubed.velociraptor)
+<h1 align="center">Velociraptor V2</h1>
 
-### Development
-- Put `google-services.json` from Firebase in /app/
-- (Optional) Put `fabric.properties` in /app/ with apiSecret
-- (Optional) Put `apis.xml` with overpass_api and debug_id in /app/src/main/res/values/
-- (Optional) Put signing keys in gradle.properties/local.properties
-    - RELEASE_STORE_FILE
-    - RELEASE_STORE_PASSWORD
-    - RELEASE_KEY_ALIAS_VELOCIRAPTOR
-    - RELEASE_KEY_PASSWORD_VELOCIRAPTOR
+<p align="center">
+    <font size="+1">Fork of the </font><a href="https://github.com/pluscubed/velociraptor"><font size="+1">original Velociraptor by 
+Daniel Ciao (pluscubed)</font></a>
+</p>
+
+[![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)](https://apilevels.com)
+[![release](https://img.shields.io/github/release/cyb3rko/velociraptor-v2.svg)](https://github.com/cyb3rko/velociraptor-v2/releases/latest)
+[![license](https://img.shields.io/github/license/cyb3rko/velociraptor-v2)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+[![last commit](https://img.shields.io/github/last-commit/cyb3rko/velociraptor-v2?color=F34C9F)](https://github.com/cyb3rko/velociraptor-v2/commits/main)
+
+---
+
+<p align="center">Floating speed limit monitor for Android with speedometer and warning features.<br/>
+<a href="https://github.com/cyb3rko/velociraptor-v2/releases/latest">
+<img height="80" src="https://raw.githubusercontent.com/gotify/android/master/download-badge.png"/>
+<a/>
+</p>
+
+---
+
+## How does it work?
+
+Every single second your location is updated. If you are more than 10 meters away from your last location where the speed limit was checked, a new request will be created.  
+The service provider is https://overpass.kumi.systems.
+
+The app updates the speed limit by requesting all streets in a radius of 15 meters around your location.
+
+<img alt="PINcredible" src="https://i.imgur.com/4N0Owkq.jpg"/>
+
+The API then returns the streets including their tags and speed limits (see the blue streets).
+
+<img alt="PINcredible" src="https://i.imgur.com/E55RL2m.jpg"/>
+
+Now the app tries to find the best match and load it into the speedometer.
+
+## License
 
 ```
-Copyright (C) 2019  Daniel Ciao
+Copyright (C) 2023 Cyb3rKo
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
