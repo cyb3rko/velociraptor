@@ -22,33 +22,11 @@
 -keep class com.crashlytics.** { *; }
 -dontwarn com.crashlytics.**
 
-#okio
--dontwarn org.codehaus.mojo.animal_sniffer.*
-
-#Retrofit
--dontwarn retrofit2.**
--keep class retrofit2.** { *; }
--keepattributes Signature
--keepattributes Exceptions
-
--keepclasseswithmembers class * {
-    @retrofit2.http.* <methods>;
-}
-
 #Glide
 -keep public class * implements com.bumptech.glide.module.GlideModule
 -keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
     **[] $VALUES;
     public *;
-}
-
-#Jackson
--keep @com.fasterxml.jackson.annotation.JsonIgnoreProperties class * { *; }
--keep class com.fasterxml.** { *; }
--keep class org.codehaus.** { *; }
--keepnames class com.fasterxml.jackson.** { *; }
--keepclassmembers public final enum com.fasterxml.jackson.annotation.JsonAutoDetect$Visibility {
-    public static final com.fasterxml.jackson.annotation.JsonAutoDetect$Visibility *;
 }
 
 #DbInspector

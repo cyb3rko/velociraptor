@@ -24,7 +24,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.pluscubed.velociraptor.BuildConfig
 import com.pluscubed.velociraptor.R
 import com.pluscubed.velociraptor.limit.LimitService
-import retrofit2.Response
 
 @ColorInt
 fun Context.getColorResCompat(@AttrRes id: Int): Int {
@@ -150,15 +149,6 @@ object Utils {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = cm.activeNetworkInfo
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting
-    }
-
-    fun <T : Any> getResponseBody(response: Response<T?>): T {
-        if (!response.isSuccessful)
-            throw Exception("Error code: ${response.code()}, ${response.errorBody()?.string()}")
-        val body = response.body()
-        if (body == null)
-            throw Exception("Null response")
-        return body
     }
 
     fun openLink(context: Context?, view: View?, uriString: String) {

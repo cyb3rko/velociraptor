@@ -3,8 +3,7 @@ package com.pluscubed.velociraptor.api.osm
 import android.content.Context
 import android.location.Location
 import android.net.Uri
-import com.pluscubed.velociraptor.api.LimitFetcher
-import com.pluscubed.velociraptor.api.LimitInterceptor
+import com.pluscubed.velociraptor.BuildConfig
 import com.pluscubed.velociraptor.api.LimitProvider
 import com.pluscubed.velociraptor.api.LimitResponse
 import com.pluscubed.velociraptor.api.cache.CacheLimitProvider
@@ -13,30 +12,73 @@ import com.pluscubed.velociraptor.api.osm.data.OsmResponse
 import com.pluscubed.velociraptor.api.osm.data.Tags
 import com.pluscubed.velociraptor.utils.PrefUtils
 import com.pluscubed.velociraptor.utils.Utils
-import okhttp3.OkHttpClient
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.header
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.http.isSuccess
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
 import timber.log.Timber
 import java.io.IOException
 import java.util.Locale
 
 class OsmLimitProvider(
         private val context: Context,
-        private val client: OkHttpClient,
         private val cacheLimitProvider: CacheLimitProvider
 ) : LimitProvider {
     private lateinit var endpoint: OsmApiEndpoint
 
     private fun initializeOsmService() {
-        endpoint = OsmApiEndpoint(ENDPOINT_URL)
-        val osmInterceptor = LimitInterceptor(object : LimitInterceptor.Callback() {
-            override fun updateTimeTaken(timeTaken: Int) {
-                updateEndpointTimeTaken(timeTaken, endpoint)
+        val client = buildHttpClient()
+        endpoint = OsmApiEndpoint(client, ENDPOINT_URL)
+    }
+
+    private fun buildHttpClient(): HttpClient {
+        val client = HttpClient(CIO) {
+            defaultRequest {
+                contentType(ContentType.Application.Json)
+                url(ENDPOINT_URL)
+                header("User-Agent", "VelociraptorV2/${BuildConfig.VERSION_NAME}")
             }
-        })
-        val osmClient = client.newBuilder()
-            .addInterceptor(osmInterceptor)
-            .build()
-        val osmRest = LimitFetcher.buildRetrofit(osmClient, ENDPOINT_URL)
-        endpoint.service = osmRest.create(OsmService::class.java)
+            HttpResponseValidator {
+                validateResponse {
+                    if (!it.status.isSuccess()) return@validateResponse
+                    updateEndpointTimeTaken(
+                        (it.responseTime.timestamp - it.requestTime.timestamp).toInt(),
+                        endpoint
+                    )
+                }
+            }
+            install(ContentNegotiation) {
+                json(Json {
+                    ignoreUnknownKeys = true
+                })
+            }
+            install(HttpTimeout) {
+                requestTimeoutMillis = 15000
+            }
+            if (BuildConfig.DEBUG) {
+                install(Logging) {
+                    logger = object: Logger {
+                        override fun log(message: String) {
+                            Timber.d(message)
+                        }
+                    }
+                    level = LogLevel.HEADERS
+                }
+            }
+        }
+        return client
     }
 
     private fun updateEndpointTimeTaken(timeTaken: Int, endpoint: OsmApiEndpoint) {
@@ -56,10 +98,12 @@ class OsmLimitProvider(
 
     private fun getOsmResponse(location: Location): OsmResponse {
         try {
-            val osmNetworkResponse =
-                    endpoint.service!!.getOsm(buildQueryBody(location)).execute()
+            val osmNetWorkResponse: OsmResponse
+            runBlocking {
+                osmNetWorkResponse = endpoint.getOsm(buildQueryBody(location))
+            }
             logOsmRequest(endpoint)
-            return Utils.getResponseBody(osmNetworkResponse)
+            return osmNetWorkResponse
         } catch (e: Exception) {
             //catch any errors, rethrow
             updateEndpointTimeTaken(Integer.MAX_VALUE, endpoint)
@@ -103,7 +147,7 @@ class OsmLimitProvider(
             for (element in elements) {
 
                 //Get coords
-                if (element.geometry != null && !element.geometry.isEmpty()) {
+                if (element.geometry.isNotEmpty()) {
                     limitResponse = limitResponse.copy(coords = element.geometry)
                 } else if (element !== bestMatch) {
                     /* If coords are empty and element is not the best one,
@@ -151,7 +195,7 @@ class OsmLimitProvider(
             "null"
         } else if (name != null && ref != null) {
             "$ref$ROADNAME_DELIM$name"
-        } else name ?: ref
+        } else name ?: ref.orEmpty()
     }
 
     private fun parseOsmSpeedLimit(maxspeed: String): Int {

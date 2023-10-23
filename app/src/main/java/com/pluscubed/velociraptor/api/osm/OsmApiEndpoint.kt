@@ -1,24 +1,28 @@
 package com.pluscubed.velociraptor.api.osm
 
-class OsmApiEndpoint(val baseUrl: String) : Comparable<OsmApiEndpoint> {
+import com.pluscubed.velociraptor.api.osm.data.OsmResponse
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 
-    var service: OsmService? = null
-        get() {
-            if (field == null) {
-                throw Exception("OSM Service not set")
-            }
-            return field
-        }
+class OsmApiEndpoint(
+    private val client: HttpClient,
+    val baseUrl: String
+) : Comparable<OsmApiEndpoint> {
     var timeTaken: Int = 0
 
+    suspend fun getOsm(data: String): OsmResponse {
+        return client.post("interpreter") {
+            setBody(data)
+        }.body()
+    }
+
     override fun toString(): String {
-        val time: String
-        if (timeTaken == Integer.MAX_VALUE) {
-            time = "error"
-        } else if (timeTaken == 0) {
-            time = "pending"
-        } else {
-            time = timeTaken.toString() + "ms"
+        val time = when (timeTaken) {
+            Int.MAX_VALUE -> "error"
+            0 -> "pending"
+            else -> timeTaken.toString() + "ms"
         }
 
         return this.baseUrl + " - " + time

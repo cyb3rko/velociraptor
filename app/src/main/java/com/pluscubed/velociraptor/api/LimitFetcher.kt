@@ -2,47 +2,20 @@ package com.pluscubed.velociraptor.api
 
 import android.content.Context
 import android.location.Location
-import com.pluscubed.velociraptor.BuildConfig
 import com.pluscubed.velociraptor.api.cache.CacheLimitProvider
 import com.pluscubed.velociraptor.api.osm.OsmLimitProvider
 import com.pluscubed.velociraptor.utils.PrefUtils
 import com.pluscubed.velociraptor.utils.Utils
 import kotlinx.coroutines.delay
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.jackson.JacksonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
 class LimitFetcher(private val context: Context) {
 
-    private val cacheLimitProvider: CacheLimitProvider
-    private val osmLimitProvider: OsmLimitProvider
+    private val cacheLimitProvider: CacheLimitProvider = CacheLimitProvider(context)
+    private val osmLimitProvider: OsmLimitProvider = OsmLimitProvider(context, cacheLimitProvider)
 
     private var lastResponse: LimitResponse? = null
     private var lastNetworkResponse: LimitResponse? = null
-
-    init {
-        val client = buildOkHttpClient()
-
-        this.cacheLimitProvider = CacheLimitProvider(context)
-        this.osmLimitProvider = OsmLimitProvider(context, client, cacheLimitProvider)
-    }
-
-    private fun buildOkHttpClient(): OkHttpClient {
-        val builder = OkHttpClient.Builder()
-                .connectTimeout(15, TimeUnit.SECONDS)
-                .writeTimeout(15, TimeUnit.SECONDS)
-                .readTimeout(15, TimeUnit.SECONDS)
-        if (BuildConfig.DEBUG) {
-            val loggingInterceptor = HttpLoggingInterceptor()
-            loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-            builder.addInterceptor(loggingInterceptor)
-        }
-        return builder.build()
-    }
 
     suspend fun getSpeedLimit(location: Location): LimitResponse {
         val limitResponses = ArrayList<LimitResponse>()
@@ -98,17 +71,4 @@ class LimitFetcher(private val context: Context) {
 
         return finalResponse
     }
-
-
-    companion object {
-        fun buildRetrofit(client: OkHttpClient, baseUrl: String): Retrofit {
-            return Retrofit.Builder()
-                    .baseUrl(baseUrl)
-                    .client(client)
-                    .addConverterFactory(ScalarsConverterFactory.create())
-                    .addConverterFactory(JacksonConverterFactory.create())
-                    .build()
-        }
-    }
-
 }
