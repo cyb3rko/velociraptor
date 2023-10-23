@@ -5,7 +5,6 @@ import android.location.Location
 import com.pluscubed.velociraptor.BuildConfig
 import com.pluscubed.velociraptor.api.cache.CacheLimitProvider
 import com.pluscubed.velociraptor.api.osm.OsmLimitProvider
-import com.pluscubed.velociraptor.api.raptor.RaptorLimitProvider
 import com.pluscubed.velociraptor.utils.PrefUtils
 import com.pluscubed.velociraptor.utils.Utils
 import kotlinx.coroutines.delay
@@ -21,7 +20,6 @@ class LimitFetcher(private val context: Context) {
 
     private val cacheLimitProvider: CacheLimitProvider
     private val osmLimitProvider: OsmLimitProvider
-    private val raptorLimitProvider: RaptorLimitProvider
 
     private var lastResponse: LimitResponse? = null
     private var lastNetworkResponse: LimitResponse? = null
@@ -31,7 +29,6 @@ class LimitFetcher(private val context: Context) {
 
         this.cacheLimitProvider = CacheLimitProvider(context)
         this.osmLimitProvider = OsmLimitProvider(context, client, cacheLimitProvider)
-        this.raptorLimitProvider = RaptorLimitProvider(context, client, cacheLimitProvider)
     }
 
     private fun buildOkHttpClient(): OkHttpClient {
@@ -64,27 +61,9 @@ class LimitFetcher(private val context: Context) {
             }
         }
 
-        // 1. Always try raptor service if cache didn't hit / didn't contain a limit
         if (limitResponses.last().speedLimit == -1 && networkConnected) {
-            val hereResponses =
-                    raptorLimitProvider.getSpeedLimit(location, lastResponse, LimitResponse.ORIGIN_HERE)
-            if (hereResponses.isNotEmpty())
-                limitResponses += hereResponses[0]
-        }
-
-        if (limitResponses.last().speedLimit == -1 && networkConnected) {
-            val tomtomResponses = raptorLimitProvider.getSpeedLimit(
-                    location,
-                    lastResponse,
-                    LimitResponse.ORIGIN_TOMTOM
-            )
-            if (tomtomResponses.isNotEmpty())
-                limitResponses += tomtomResponses[0]
-        }
-
-        if (limitResponses.last().speedLimit == -1 && networkConnected) {
-            // 2. Try OSM if the cache hits didn't contain a limit BUT were not from OSM
-            //    i.e. query OSM as it might have the limit
+            // Try OSM if the cache hits didn't contain a limit BUT were not from OSM
+            // i.e. query OSM as it might have the limit
             var cachedOsmWithNoLimit = false
             for (cacheRes in cacheResponses) {
                 if (cacheRes.origin == LimitResponse.ORIGIN_OSM) {
