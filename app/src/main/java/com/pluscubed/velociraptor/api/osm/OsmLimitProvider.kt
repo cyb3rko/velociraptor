@@ -33,8 +33,8 @@ import java.io.IOException
 import java.util.Locale
 
 class OsmLimitProvider(
-        private val context: Context,
-        private val cacheLimitProvider: CacheLimitProvider
+    private val context: Context,
+    private val cacheLimitProvider: CacheLimitProvider
 ) : LimitProvider {
     private lateinit var endpoint: OsmApiEndpoint
 
@@ -119,14 +119,9 @@ class OsmLimitProvider(
     ): List<LimitResponse> {
         val debuggingEnabled = PrefUtils.isDebuggingEnabled(context)
         var limitResponse = LimitResponse(
-                timestamp = System.currentTimeMillis(),
-                origin = LimitResponse.ORIGIN_OSM,
-                debugInfo = (
-                        if (debuggingEnabled)
-                            "\nOSM Info:${endpoint.baseUrl}"
-                        else
-                            ""
-                        )
+            timestamp = System.currentTimeMillis(),
+            origin = LimitResponse.ORIGIN_OSM,
+            debugInfo = if (debuggingEnabled) "\nOSM Info:${endpoint.baseUrl}" else ""
         )
         try {
             val osmResponse = getOsmResponse(location)
@@ -145,13 +140,13 @@ class OsmLimitProvider(
             var bestResponse: LimitResponse? = null
 
             for (element in elements) {
-
                 //Get coords
                 if (element.geometry.isNotEmpty()) {
                     limitResponse = limitResponse.copy(coords = element.geometry)
                 } else if (element !== bestMatch) {
-                    /* If coords are empty and element is not the best one,
-                            no need to continue parsing info for cacheLimitProvider. Skip to next element. */
+                    // If coords are empty and element is not the best one,
+                    // no need to continue parsing info for cacheLimitProvider.
+                    // Skip to next element.
                     continue
                 }
 
@@ -183,7 +178,7 @@ class OsmLimitProvider(
 
         } catch (e: Exception) {
             return listOf(
-                    limitResponse.copy(error = e).initDebugInfo(debuggingEnabled)
+                limitResponse.copy(error = e).initDebugInfo(debuggingEnabled)
             )
         }
     }
@@ -208,11 +203,10 @@ class OsmLimitProvider(
             speedLimit = Integer.valueOf(split[0])
             speedLimit = Utils.convertMphToKmh(speedLimit)
         }
-
         return speedLimit
     }
 
-    private fun getBestElement(elements: List<Element>, lastResponse: LimitResponse?): Element? {
+    private fun getBestElement(elements: List<Element>, lastResponse: LimitResponse?): Element {
         var bestElement: Element? = null
         var fallback: Element? = null
 
@@ -261,5 +255,4 @@ class OsmLimitProvider(
     init {
         initializeOsmService()
     }
-
 }

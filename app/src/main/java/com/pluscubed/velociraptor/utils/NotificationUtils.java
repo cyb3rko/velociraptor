@@ -8,7 +8,6 @@ import android.os.Build;
 import com.pluscubed.velociraptor.R;
 
 public class NotificationUtils {
-
     public static final String CHANNEL_TOGGLES = "toggles";
     public static final String CHANNEL_RUNNING = "running";
     public static final String CHANNEL_WARNINGS = "warnings";

@@ -10,7 +10,6 @@ import com.pluscubed.velociraptor.BuildConfig
 import java.util.*
 
 object SelectedAppDatabase {
-
     /**
      * Returns sorted list of map apps (packageName, name)
      */

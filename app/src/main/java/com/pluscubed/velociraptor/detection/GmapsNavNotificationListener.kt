@@ -5,22 +5,18 @@ import android.content.Intent
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.text.TextUtils
-
 import com.pluscubed.velociraptor.limit.LimitService
 import com.pluscubed.velociraptor.utils.PrefUtils
 
 class GmapsNavNotificationListener : NotificationListenerService() {
-
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
-        if (sbn == null) {
-            return
-        }
+        if (sbn == null) return
 
         val packageName = sbn.packageName
         if (TextUtils.isEmpty(packageName)
-                || packageName != AppDetectionService.GOOGLE_MAPS_PACKAGE
-                || sbn.notification.priority != Notification.PRIORITY_MAX
-                || !PrefUtils.isGmapsOnlyInNavigation(this)
+            || packageName != AppDetectionService.GOOGLE_MAPS_PACKAGE
+            || sbn.notification.priority != Notification.PRIORITY_MAX
+            || !PrefUtils.isGmapsOnlyInNavigation(this)
         ) {
             return
         }
@@ -39,9 +35,9 @@ class GmapsNavNotificationListener : NotificationListenerService() {
 
         val packageName = sbn.packageName
         if (TextUtils.isEmpty(packageName)
-                || packageName != AppDetectionService.GOOGLE_MAPS_PACKAGE
-                || sbn.notification.priority != Notification.PRIORITY_MAX
-                || !PrefUtils.isGmapsOnlyInNavigation(this)
+            || packageName != AppDetectionService.GOOGLE_MAPS_PACKAGE
+            || sbn.notification.priority != Notification.PRIORITY_MAX
+            || !PrefUtils.isGmapsOnlyInNavigation(this)
         ) {
             return
         }
@@ -52,5 +48,4 @@ class GmapsNavNotificationListener : NotificationListenerService() {
         intent.putExtra(LimitService.EXTRA_NOTIF_CLOSE, true)
         startService(intent)
     }
-
 }

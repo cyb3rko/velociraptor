@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 import java.util.Locale
 
 @Serializable
-class Coord(
+data class Coord(
     var lat: Double,
     var lon: Double
 ) {

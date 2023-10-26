@@ -69,16 +69,17 @@ class SizeDialogFragment : DialogFragment() {
                 try {
                     setSize(limit, percentSlider.value / 100f)
                     Utils.updateFloatingServicePrefs(activity)
-                } catch (ignored: NumberFormatException) {
-                }
+                } catch (ignored: NumberFormatException) {}
             }
         })
     }
 
     private fun getSize(limit: Boolean): Float {
-        return if (limit) PrefUtils.getSpeedLimitSize(activity) else PrefUtils.getSpeedometerSize(
-                activity
-        )
+        return if (limit) {
+            PrefUtils.getSpeedLimitSize(activity)
+        } else {
+            PrefUtils.getSpeedometerSize(activity)
+        }
     }
 
     private fun setSize(limit: Boolean, size: Float) {
@@ -88,5 +89,4 @@ class SizeDialogFragment : DialogFragment() {
             PrefUtils.setSpeedometerSize(activity, size)
         }
     }
-
 }

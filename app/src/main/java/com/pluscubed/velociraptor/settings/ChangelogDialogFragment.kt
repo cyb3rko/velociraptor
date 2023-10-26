@@ -16,9 +16,7 @@ import com.pluscubed.velociraptor.utils.getColorResCompat
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-
 class ChangelogDialogFragment : DialogFragment() {
-
     @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val customView = LayoutInflater.from(activity).inflate(R.layout.dialog_webview, null)
@@ -57,11 +55,11 @@ class ChangelogDialogFragment : DialogFragment() {
             webView.setBackgroundColor(Color.TRANSPARENT)
         } catch (e: Throwable) {
             webView.loadDataWithBaseURL(
-                    null,
-                    "<h1>Unable to load</h1><p>${e.localizedMessage}</p>",
-                    "text/html",
-                    "UTF-8",
-                    null
+                null,
+                "<h1>Unable to load</h1><p>${e.localizedMessage}</p>",
+                "text/html",
+                "UTF-8",
+                null
             )
         }
 
@@ -69,10 +67,6 @@ class ChangelogDialogFragment : DialogFragment() {
     }
 
     companion object {
-
-        fun newInstance(): ChangelogDialogFragment {
-            val dialog = ChangelogDialogFragment()
-            return dialog
-        }
+        fun newInstance() = ChangelogDialogFragment()
     }
 }

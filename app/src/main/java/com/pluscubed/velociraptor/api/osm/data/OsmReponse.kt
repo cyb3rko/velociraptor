@@ -3,6 +3,6 @@ package com.pluscubed.velociraptor.api.osm.data
 import kotlinx.serialization.Serializable
 
 @Serializable
-class OsmResponse(
+data class OsmResponse(
     val elements: List<Element> = ArrayList()
 )

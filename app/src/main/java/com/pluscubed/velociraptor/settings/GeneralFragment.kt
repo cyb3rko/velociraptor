@@ -36,24 +36,23 @@ class GeneralFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         val unitAdapter = ArrayAdapter(requireContext(), R.layout.spinner_item_text, arrayOf("mph", "km/h"))
         unitAdapter.setDropDownViewResource(R2.layout.support_simple_spinner_dropdown_item)
         val unitSpinner = binding.spinnerUnit
         unitSpinner.adapter = unitAdapter
         unitSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View?,
-                    position: Int,
-                    id: Long
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
             ) {
                 val isMetric = position == 1
                 if (PrefUtils.getUseMetric(activity) != isMetric) {
                     PrefUtils.setUseMetric(activity, isMetric)
                     unitSpinner.dropDownVerticalOffset = Utils.convertDpToPx(
-                            activity,
-                            (unitSpinner.selectedItemPosition * -48).toFloat()
+                        activity,
+                        (unitSpinner.selectedItemPosition * -48).toFloat()
                     )
 
                     Utils.updateFloatingServicePrefs(activity)
@@ -61,105 +60,99 @@ class GeneralFragment : Fragment() {
                 }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {
-
-            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
         unitSpinner.setSelection(if (PrefUtils.getUseMetric(activity)) 1 else 0)
-        unitSpinner.dropDownVerticalOffset =
-                Utils.convertDpToPx(activity, (unitSpinner.selectedItemPosition * -48).toFloat())
+        unitSpinner.dropDownVerticalOffset = Utils.convertDpToPx(
+            activity,
+            (unitSpinner.selectedItemPosition * -48).toFloat()
+        )
 
         val styleAdapter = ArrayAdapter(
-                requireContext(),
-                R.layout.spinner_item_text,
-                arrayOf(getString(R.string.united_states), getString(R.string.international))
+            requireContext(),
+            R.layout.spinner_item_text,
+            arrayOf(getString(R.string.united_states), getString(R.string.international))
         )
         styleAdapter.setDropDownViewResource(R2.layout.support_simple_spinner_dropdown_item)
         val styleSpinner = binding.spinnerStyle
         styleSpinner.adapter = styleAdapter
         styleSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View?,
-                    position: Int,
-                    id: Long
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
             ) {
                 if (position != PrefUtils.getSignStyle(activity)) {
                     PrefUtils.setSignStyle(activity, position)
-                    styleSpinner.dropDownVerticalOffset =
-                            Utils.convertDpToPx(
-                                    activity,
-                                    (styleSpinner.selectedItemPosition * -48).toFloat()
-                            )
-
+                    styleSpinner.dropDownVerticalOffset = Utils.convertDpToPx(
+                        activity,
+                        (styleSpinner.selectedItemPosition * -48).toFloat()
+                    )
                     Utils.updateFloatingServicePrefs(activity)
                 }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {
-
-            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
         styleSpinner.setSelection(PrefUtils.getSignStyle(activity))
-        styleSpinner.dropDownVerticalOffset =
-                Utils.convertDpToPx(activity, (styleSpinner.selectedItemPosition * -48).toFloat())
+        styleSpinner.dropDownVerticalOffset = Utils.convertDpToPx(
+            activity,
+            (styleSpinner.selectedItemPosition * -48).toFloat()
+        )
 
-        binding.linearTolerance.setOnClickListener { v ->
+        binding.linearTolerance.setOnClickListener {
             ToleranceDialogFragment().show(
-                    childFragmentManager,
-                    "dialog_tolerance"
+                childFragmentManager,
+                "dialog_tolerance"
             )
         }
 
-        binding.linearSize.setOnClickListener { v ->
+        binding.linearSize.setOnClickListener {
             SizeDialogFragment().show(
-                    childFragmentManager,
-                    "dialog_size"
+                childFragmentManager,
+                "dialog_size"
             )
         }
 
-        binding.linearOpacity.setOnClickListener { v ->
+        binding.linearOpacity.setOnClickListener {
             OpacityDialogFragment().show(
-                    childFragmentManager,
-                    "dialog_opacity"
+                childFragmentManager,
+                "dialog_opacity"
             )
         }
 
         val showSpeedometerSwitch = binding.switchSpeedometer
         showSpeedometerSwitch.isChecked = PrefUtils.getShowSpeedometer(activity)
-        (showSpeedometerSwitch.parent as View).setOnClickListener { v ->
+        (showSpeedometerSwitch.parent as View).setOnClickListener {
             showSpeedometerSwitch.isChecked = !showSpeedometerSwitch.isChecked
-
             PrefUtils.setShowSpeedometer(activity, showSpeedometerSwitch.isChecked)
-
             Utils.updateFloatingServicePrefs(activity)
         }
 
         val showSpeedLimitsSwitch = binding.switchLimits
         showSpeedLimitsSwitch.isChecked = PrefUtils.getShowLimits(activity)
-        (showSpeedLimitsSwitch.parent as View).setOnClickListener { v ->
+        (showSpeedLimitsSwitch.parent as View).setOnClickListener {
             showSpeedLimitsSwitch.isChecked = !showSpeedLimitsSwitch.isChecked
-
             PrefUtils.setShowLimits(activity, showSpeedLimitsSwitch.isChecked)
-
             Utils.updateFloatingServicePrefs(activity)
         }
 
         val beepSwitch = binding.switchBeep
         beepSwitch.isChecked = PrefUtils.isBeepAlertEnabled(activity)
-        beepSwitch.setOnClickListener { v ->
+        beepSwitch.setOnClickListener {
             PrefUtils.setBeepAlertEnabled(
-                    activity,
-                    beepSwitch.isChecked
+                activity,
+                beepSwitch.isChecked
             )
         }
-        binding.buttonTestBeep.setOnClickListener { v -> Utils.playBeeps() }
+        binding.buttonTestBeep.setOnClickListener { Utils.playBeeps() }
     }
 
     private fun invalidateStates() {
         val constant = getString(
-                if (PrefUtils.getUseMetric(activity)) R.string.kmph else R.string.mph,
-                PrefUtils.getSpeedingConstant(activity).toString()
+            if (PrefUtils.getUseMetric(activity)) R.string.kmph else R.string.mph,
+            PrefUtils.getSpeedingConstant(activity).toString()
         )
         val percent = getString(R.string.percent, PrefUtils.getSpeedingPercent(activity).toString())
         val mode = if (PrefUtils.getToleranceMode(activity)) "+" else getString(R.string.or)
@@ -178,7 +171,9 @@ class GeneralFragment : Fragment() {
         val speedometerSize = getString(R.string.size_speedometer_overview, speedometerSizePercent)
         binding.textOverviewSize.text = speedLimitSize + "\n" + speedometerSize
 
-        binding.textOverviewOpacity.text =
-                getString(R.string.percent, PrefUtils.getOpacity(activity).toString())
+        binding.textOverviewOpacity.text = getString(
+            R.string.percent,
+            PrefUtils.getOpacity(activity).toString()
+        )
     }
 }

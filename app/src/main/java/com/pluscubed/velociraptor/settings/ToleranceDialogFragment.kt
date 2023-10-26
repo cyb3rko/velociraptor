@@ -72,8 +72,7 @@ class ToleranceDialogFragment : DialogFragment() {
                         activity,
                         percentSlider.value.toInt()
                     )
-                } catch (ignored: NumberFormatException) {
-                }
+                } catch (ignored: NumberFormatException) {}
 
                 PrefUtils.setToleranceMode(activity, andButton.isChecked)
             }
@@ -83,7 +82,6 @@ class ToleranceDialogFragment : DialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-
         Utils.updateFloatingServicePrefs(activity)
     }
 }

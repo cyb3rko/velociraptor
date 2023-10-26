@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 public class AppInfo implements Comparable<AppInfo>, Parcelable {
 
-    public static final Creator<AppInfo> CREATOR = new Creator<AppInfo>() {
+    public static final Creator<AppInfo> CREATOR = new Creator<>() {
         @Override
         public AppInfo createFromParcel(Parcel source) {
             return new AppInfo(source);
@@ -45,6 +45,7 @@ public class AppInfo implements Comparable<AppInfo>, Parcelable {
         return name.compareToIgnoreCase(another.name);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return packageName;

@@ -23,7 +23,6 @@
  */
 package com.pluscubed.velociraptor.utils;
 
-
 /**
  * This distance is computed as levenshtein distance divided by the length of
  * the longest string. The resulting value is always in the interval [0.0 1.0]
@@ -33,7 +32,6 @@ package com.pluscubed.velociraptor.utils;
  * @author Thibault Debatty
  */
 public class NormalizedLevenshtein {
-
     private final Levenshtein l = new Levenshtein();
 
     /**
@@ -45,7 +43,6 @@ public class NormalizedLevenshtein {
      * @throws NullPointerException if s1 or s2 is null.
      */
     public final double distance(final String s1, final String s2) {
-
         if (s1 == null) {
             throw new NullPointerException("s1 must not be null");
         }
@@ -78,5 +75,4 @@ public class NormalizedLevenshtein {
     public final double similarity(final String s1, final String s2) {
         return 1.0 - distance(s1, s2);
     }
-
 }

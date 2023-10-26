@@ -14,10 +14,8 @@ import timber.log.Timber
 import java.io.InputStream
 
 class App : Application() {
-
     override fun onCreate() {
         super.onCreate()
-
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
@@ -25,19 +23,19 @@ class App : Application() {
         Glide.get(this)
                 .register(AppInfo::class.java, InputStream::class.java, AppInfoIconLoader.Factory())
 
-        if (PrefUtils.isAllMapApps(this)) {
-            GlobalScope.launch {
-                try {
-                    val mapApps =
-                            withContext(Dispatchers.IO) { SelectedAppDatabase.getMapApps(this@App) }
-                                    .filter { appInfoEntity ->
-                                        appInfoEntity.packageName != null && !appInfoEntity.packageName.isEmpty()
-                                    }.map { appInfo -> appInfo.packageName }
+        if (!PrefUtils.isAllMapApps(this)) return
 
-                    PrefUtils.setApps(this@App, mapApps.toHashSet())
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+        GlobalScope.launch {
+            try {
+                val mapApps = withContext(Dispatchers.IO) {
+                    SelectedAppDatabase.getMapApps(this@App)
+                }.filter { appInfoEntity ->
+                    appInfoEntity.packageName != null && appInfoEntity.packageName.isNotEmpty()
+                }.map { appInfo -> appInfo.packageName }
+
+                PrefUtils.setApps(this@App, mapApps.toHashSet())
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

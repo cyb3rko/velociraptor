@@ -2,7 +2,6 @@ package com.pluscubed.velociraptor.utils
 
 import android.Manifest
 import android.accessibilityservice.AccessibilityService
-import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -11,7 +10,6 @@ import android.media.AudioManager
 import android.media.ToneGenerator
 import android.net.ConnectivityManager
 import android.net.Uri
-import android.os.Build
 import android.os.Handler
 import android.provider.Settings
 import android.text.TextUtils
@@ -34,17 +32,16 @@ fun Context.getColorResCompat(@AttrRes id: Int): Int {
 }
 
 object Utils {
-
     fun isAccessibilityServiceEnabled(
-            context: Context?,
-            c: Class<out AccessibilityService>
+        context: Context?,
+        c: Class<out AccessibilityService>
     ): Boolean {
         var accessibilityEnabled = 0
         val service = BuildConfig.APPLICATION_ID + "/" + c.name
         try {
             accessibilityEnabled = Settings.Secure.getInt(
-                    context?.contentResolver,
-                    Settings.Secure.ACCESSIBILITY_ENABLED
+                context?.contentResolver,
+                Settings.Secure.ACCESSIBILITY_ENABLED
             )
         } catch (e: Settings.SettingNotFoundException) {
             e.printStackTrace()
@@ -54,8 +51,8 @@ object Utils {
 
         if (accessibilityEnabled == 1) {
             val settingValue = Settings.Secure.getString(
-                    context?.contentResolver,
-                    Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+                context?.contentResolver,
+                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
             )
             if (settingValue != null) {
                 splitter.setString(settingValue)
@@ -67,14 +64,17 @@ object Utils {
                 }
             }
         }
-
         //Accessibility is disabled
 
         return false
     }
 
     fun convertDpToPx(context: Context?, dp: Float): Int {
-        return if (context != null) (dp * context.resources.displayMetrics.density + 0.5f).toInt() else 0
+        return if (context != null) {
+            (dp * context.resources.displayMetrics.density + 0.5f).toInt()
+        } else {
+            0
+        }
     }
 
     fun convertMphToKmh(speed: Int): Int {
@@ -83,10 +83,6 @@ object Utils {
 
     fun convertKmhToMph(speed: Int): Int {
         return (speed / 1.609344 + 0.5).toInt()
-    }
-
-    fun compare(lhs: Int, rhs: Int): Int {
-        return if (lhs < rhs) -1 else if (lhs == rhs) 0 else 1
     }
 
     fun playBeeps() {
@@ -118,18 +114,17 @@ object Utils {
         }
     }
 
-    fun isServiceReady(context: Context): Boolean {
+    private fun isServiceReady(context: Context): Boolean {
         val permissionGranted = isLocationPermissionGranted(context)
-        @SuppressLint("NewApi", "LocalSuppress") val overlayEnabled =
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(context)
+        val overlayEnabled = Settings.canDrawOverlays(context)
         return permissionGranted && overlayEnabled
     }
 
     fun isLocationPermissionGranted(context: Context?): Boolean {
         if (context != null) {
             return ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_FINE_LOCATION
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         }
         return false

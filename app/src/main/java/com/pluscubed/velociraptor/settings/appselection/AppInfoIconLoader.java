@@ -19,7 +19,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 public class AppInfoIconLoader implements ModelLoader<AppInfo, InputStream> {
-
     final Context mContext;
     boolean mCancelled;
 
@@ -29,8 +28,7 @@ public class AppInfoIconLoader implements ModelLoader<AppInfo, InputStream> {
 
     InputStream drawableToStream(Drawable d) {
         Bitmap bitmap;
-        if (d instanceof BitmapDrawable) {
-            BitmapDrawable bitDw = (BitmapDrawable) d;
+        if (d instanceof BitmapDrawable bitDw) {
             bitmap = bitDw.getBitmap();
         } else {
             int width = mContext.getResources().getDimensionPixelSize(R.dimen.icon_size);
@@ -47,14 +45,13 @@ public class AppInfoIconLoader implements ModelLoader<AppInfo, InputStream> {
         byte[] imageInByte = stream.toByteArray();
         InputStream is = new ByteArrayInputStream(imageInByte);
 
-        if (mCancelled)
-            return null;
+        if (mCancelled) return null;
         return is;
     }
 
     @Override
     public DataFetcher<InputStream> getResourceFetcher(final AppInfo model, int width, int height) {
-        return new DataFetcher<InputStream>() {
+        return new DataFetcher<>() {
             @Override
             public InputStream loadData(Priority priority) throws Exception {
                 mCancelled = false;
@@ -64,8 +61,7 @@ public class AppInfoIconLoader implements ModelLoader<AppInfo, InputStream> {
             }
 
             @Override
-            public void cleanup() {
-            }
+            public void cleanup() {}
 
             @Override
             public String getId() {
@@ -80,14 +76,12 @@ public class AppInfoIconLoader implements ModelLoader<AppInfo, InputStream> {
     }
 
     public static class Factory implements ModelLoaderFactory<AppInfo, InputStream> {
-
         @Override
         public ModelLoader<AppInfo, InputStream> build(Context context, GenericLoaderFactory factories) {
             return new AppInfoIconLoader(context);
         }
 
         @Override
-        public void teardown() {
-        }
+        public void teardown() {}
     }
 }

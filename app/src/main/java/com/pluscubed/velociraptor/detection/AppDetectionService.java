@@ -62,7 +62,6 @@ public class AppDetectionService extends AccessibilityService {
             return;
         }
 
-
         if (BuildConfig.DEBUG)
             Timber.d(event.toString());
 
@@ -131,6 +130,5 @@ public class AppDetectionService extends AccessibilityService {
     }
 
     @Override
-    public void onInterrupt() {
-    }
+    public void onInterrupt() {}
 }

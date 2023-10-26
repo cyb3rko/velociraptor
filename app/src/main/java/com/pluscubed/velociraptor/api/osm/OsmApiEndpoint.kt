@@ -24,11 +24,10 @@ class OsmApiEndpoint(
             0 -> "pending"
             else -> timeTaken.toString() + "ms"
         }
-
         return this.baseUrl + " - " + time
     }
 
     override fun compareTo(other: OsmApiEndpoint): Int {
-        return timeTaken.compareTo(other.timeTaken);
+        return timeTaken.compareTo(other.timeTaken)
     }
 }

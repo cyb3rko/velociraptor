@@ -1,8 +1,6 @@
 package com.pluscubed.velociraptor.limit;
 
 public interface LimitView {
-
-
     void stop();
 
     void changeConfig();

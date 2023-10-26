@@ -14,7 +14,6 @@ import java.util.MissingResourceException;
 import java.util.Set;
 
 public abstract class PrefUtils {
-
     public static final int STYLE_US = 0;
     public static final int STYLE_INTERNATIONAL = 1;
     private static final String PREF_METRIC = "pref_metric";
@@ -207,14 +206,6 @@ public abstract class PrefUtils {
 
     public static void setGmapsOnlyInNavigation(Context context, boolean only) {
         edit(context).putBoolean(PREF_GMAPS_ONLY_NAVIGATION, only).apply();
-    }
-
-    public static boolean hasSupported(Context context) {
-        return getSharedPreferences(context).getBoolean(PREF_SUPPORTED, false);
-    }
-
-    public static void setSupported(Context context, boolean supported) {
-        edit(context).putBoolean(PREF_SUPPORTED, supported).apply();
     }
 
     public static boolean isAllMapApps(Context context) {

@@ -38,8 +38,7 @@ class OpacityDialogFragment : DialogFragment() {
                 try {
                     PrefUtils.setOpacity(activity, slider.value.toInt())
                     Utils.updateFloatingServicePrefs(activity)
-                } catch (ignored: NumberFormatException) {
-                }
+                } catch (ignored: NumberFormatException) {}
             }
         })
         return MaterialAlertDialogBuilder(requireActivity())
@@ -52,5 +51,4 @@ class OpacityDialogFragment : DialogFragment() {
             .setPositiveButton(android.R.string.ok, null)
             .create()
     }
-
 }

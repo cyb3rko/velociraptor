@@ -188,5 +188,4 @@ class SettingsActivity : AppCompatActivity() {
             e.printStackTrace()
         }
     }
-
 }

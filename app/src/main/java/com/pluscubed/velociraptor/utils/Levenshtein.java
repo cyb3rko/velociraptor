@@ -8,7 +8,6 @@ package com.pluscubed.velociraptor.utils;
  * @author Thibault Debatty
  */
 public class Levenshtein {
-
     /**
      * Equivalent to distance(s1, s2, Integer.MAX_VALUE).
      */
@@ -46,8 +45,7 @@ public class Levenshtein {
      * @return The computed Levenshtein distance.
      * @throws NullPointerException if s1 or s2 is null.
      */
-    public final double distance(final String s1, final String s2,
-                                 final int limit) {
+    public final double distance(final String s1, final String s2, final int limit) {
         if (s1 == null) {
             throw new NullPointerException("s1 must not be null");
         }
@@ -116,7 +114,6 @@ public class Levenshtein {
             v1 = vtemp;
 
         }
-
         return v0[s2.length()];
     }
 }

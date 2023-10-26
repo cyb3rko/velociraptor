@@ -27,6 +27,7 @@ import com.pluscubed.velociraptor.utils.Utils
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.*
+import kotlin.math.roundToInt
 
 class LimitService : LifecycleService() {
     private var speedLimitViewType = -1
@@ -65,10 +66,8 @@ class LimitService : LifecycleService() {
     @SuppressLint("InflateParams")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent != null) {
-            if (!isStartedFromNotification && intent.getBooleanExtra(
-                            EXTRA_CLOSE,
-                            false
-                    ) || intent.getBooleanExtra(EXTRA_NOTIF_CLOSE, false)
+            if (!isStartedFromNotification && intent.getBooleanExtra(EXTRA_CLOSE, false)
+                || intent.getBooleanExtra(EXTRA_NOTIF_CLOSE, false)
             ) {
                 onStop()
                 stopSelf()
@@ -103,8 +102,9 @@ class LimitService : LifecycleService() {
             }
         }
 
-        if (isRunning || !prequisitesMet() || speedLimitView == null)
+        if (isRunning || !prequisitesMet() || speedLimitView == null) {
             return super.onStartCommand(intent, flags, startId)
+        }
 
         isRunning = true
 
@@ -128,12 +128,11 @@ class LimitService : LifecycleService() {
 
         try {
             fusedLocationClient!!.requestLocationUpdates(
-                    locationRequest,
-                    locationCallback!!,
-                    Looper.myLooper()
+                locationRequest,
+                locationCallback!!,
+                Looper.myLooper()
             )
-        } catch (unlikely: SecurityException) {
-        }
+        } catch (_: SecurityException) {}
 
         return super.onStartCommand(intent, flags, startId)
     }
@@ -147,10 +146,10 @@ class LimitService : LifecycleService() {
     private fun startNotification() {
         val notificationIntent = Intent(this, SettingsActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
-                this,
-                PENDING_SETTINGS,
-                notificationIntent,
-                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            this,
+            PENDING_SETTINGS,
+            notificationIntent,
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         NotificationUtils.initChannels(this)
@@ -214,8 +213,9 @@ class LimitService : LifecycleService() {
         if (speedLimitInactive && !isLimitHidden && showLimits && farFromLastLocation) {
             speedLimitJob = lifecycleScope.launch {
                 try {
-                    val limitResponse =
-                            withContext(Dispatchers.IO) { limitFetcher!!.getSpeedLimit(location) }
+                    val limitResponse = withContext(Dispatchers.IO) {
+                        limitFetcher!!.getSpeedLimit(location)
+                    }
 
                     if (!limitResponse.isEmpty) {
                         currentLimitResponse = limitResponse
@@ -236,15 +236,14 @@ class LimitService : LifecycleService() {
 
                     lastLocationWithFetchAttempt = location
                 }
-
             }
         }
     }
 
     private fun updateDebuggingText(
-            location: Location,
-            limitResponse: LimitResponse?,
-            error: Throwable?
+        location: Location,
+        limitResponse: LimitResponse?,
+        error: Throwable?
     ) {
         if (!PrefUtils.isDebuggingEnabled(this)) {
             debuggingRequestInfo = ""
@@ -262,7 +261,6 @@ class LimitService : LifecycleService() {
         } else if (error != null) {
             debuggingRequestInfo = "Catastrophic error: $error"
         }
-
 
         text += debuggingRequestInfo
         text += "\n\nYou can turn off this window in the Velociraptor app"
@@ -292,20 +290,18 @@ class LimitService : LifecycleService() {
         }
 
         val metersPerSeconds = location.speed
-
-        val kmhSpeed = Math.round(metersPerSeconds.toDouble() * 60.0 * 60.0 / 1000).toInt()
-        val speedometerPercentage = Math.round(kmhSpeed.toFloat() / 240 * 100)
+        val kmhSpeed = (metersPerSeconds.toDouble() * 60.0 * 60.0 / 1000).roundToInt()
+        val speedometerPercentage = (kmhSpeed.toFloat() / 240 * 100).roundToInt()
 
         val percentToleranceFactor = 1 + PrefUtils.getSpeedingPercent(this).toFloat() / 100
         val constantTolerance = PrefUtils.getSpeedingConstant(this)
 
         val currentSpeedLimit = getCurrentSpeedLimit()
         val percentToleratedLimit = (currentSpeedLimit * percentToleranceFactor).toInt()
-        val warningLimit: Int
-        if (PrefUtils.getToleranceMode(this)) {
-            warningLimit = percentToleratedLimit + constantTolerance
+        val warningLimit = if (PrefUtils.getToleranceMode(this)) {
+            percentToleratedLimit + constantTolerance
         } else {
-            warningLimit = Math.min(percentToleratedLimit, currentSpeedLimit + constantTolerance)
+            percentToleratedLimit.coerceAtMost(currentSpeedLimit + constantTolerance)
         }
 
         if (currentSpeedLimit != -1 && kmhSpeed > warningLimit) {
@@ -340,31 +336,31 @@ class LimitService : LifecycleService() {
         return speed
     }
 
-    internal fun showWarningNotification(stringRes: Int) {
+    private fun showWarningNotification(stringRes: Int) {
         val notificationIntent = Intent(this, SettingsActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
-                this,
-                PENDING_SETTINGS,
-                notificationIntent,
-                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            this,
+            PENDING_SETTINGS,
+            notificationIntent,
+            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         NotificationUtils.initChannels(this)
         val notificationText = getString(stringRes)
         val notification = NotificationCompat.Builder(this, NotificationUtils.CHANNEL_WARNINGS)
-                .setContentTitle(getString(R.string.warning_notif_title))
-                .setContentText(notificationText)
-                .setPriority(Notification.PRIORITY_LOW)
-                .setSmallIcon(R.drawable.ic_speedometer_notif)
-                .setContentIntent(pendingIntent)
-                .setStyle(NotificationCompat.BigTextStyle().bigText(notificationText))
-                .build()
+            .setContentTitle(getString(R.string.warning_notif_title))
+            .setContentText(notificationText)
+            .setPriority(Notification.PRIORITY_LOW)
+            .setSmallIcon(R.drawable.ic_speedometer_notif)
+            .setContentIntent(pendingIntent)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(notificationText))
+            .build()
 
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.notify(stringRes, notification)
     }
 
-    internal fun dismissWarningNotification(stringRes: Int) {
+    private fun dismissWarningNotification(stringRes: Int) {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.cancel(stringRes)
     }
@@ -378,21 +374,16 @@ class LimitService : LifecycleService() {
         if (fusedLocationClient != null) {
             try {
                 fusedLocationClient!!.removeLocationUpdates(locationCallback!!)
-            } catch (ignore: SecurityException) {
-            }
+            } catch (ignore: SecurityException) {}
         }
 
-        if (speedLimitView != null)
-            speedLimitView!!.stop()
-
-        isRunning = false;
+        if (speedLimitView != null) speedLimitView!!.stop()
+        isRunning = false
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-
-        if (speedLimitView != null)
-            speedLimitView!!.changeConfig()
+        if (speedLimitView != null) speedLimitView!!.changeConfig()
     }
 
     companion object {
@@ -409,5 +400,4 @@ class LimitService : LifecycleService() {
         const val EXTRA_HIDE_LIMIT = "com.pluscubed.velociraptor.HIDE_LIMIT"
         private const val NOTIFICATION_FOREGROUND = 303
     }
-
 }

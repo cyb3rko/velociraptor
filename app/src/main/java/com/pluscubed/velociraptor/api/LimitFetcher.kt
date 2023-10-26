@@ -10,7 +10,6 @@ import kotlinx.coroutines.delay
 import timber.log.Timber
 
 class LimitFetcher(private val context: Context) {
-
     private val cacheLimitProvider: CacheLimitProvider = CacheLimitProvider(context)
     private val osmLimitProvider: OsmLimitProvider = OsmLimitProvider(context, cacheLimitProvider)
 
@@ -51,13 +50,13 @@ class LimitFetcher(private val context: Context) {
         }
 
         //Accumulate debug infos, based on the last response (the one with the speed limit or the last option)
-        var finalResponse =
-                if (PrefUtils.isDebuggingEnabled(context))
-                    limitResponses.reduce { acc, next ->
-                        next.copy(debugInfo = acc.debugInfo + "\n" + next.debugInfo)
-                    }
-                else
-                    limitResponses.last()
+        var finalResponse = if (PrefUtils.isDebuggingEnabled(context)) {
+            limitResponses.reduce { acc, next ->
+                next.copy(debugInfo = acc.debugInfo + "\n" + next.debugInfo)
+            }
+        } else {
+            limitResponses.last()
+        }
 
         //Record the last response's timestamp and network response
         if (finalResponse.timestamp == 0L) {
@@ -67,7 +66,6 @@ class LimitFetcher(private val context: Context) {
         if (!finalResponse.fromCache) {
             lastNetworkResponse = finalResponse
         }
-
 
         return finalResponse
     }

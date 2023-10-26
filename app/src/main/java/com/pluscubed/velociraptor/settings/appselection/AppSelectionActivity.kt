@@ -25,7 +25,6 @@ import java.util.*
 
 class AppSelectionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAppselectionBinding
-
     private lateinit var adapter: AppAdapter
 
     private var selectedPackageNames: MutableSet<String>? = null
@@ -46,7 +45,6 @@ class AppSelectionActivity : AppCompatActivity() {
         binding.recyclerview.let {
             it.adapter = adapter
             it.layoutManager = LinearLayoutManager(this)
-            //binding.fastscroller.attachRecyclerView(it)
         }
 
         binding.swiperefresh.setOnRefreshListener {
@@ -58,10 +56,10 @@ class AppSelectionActivity : AppCompatActivity() {
             adapter.setAppInfos(ArrayList())
         }
         binding.swiperefresh.setColorSchemeColors(
-                ContextCompat.getColor(
-                        this,
-                        R.color.colorAccent
-                )
+            ContextCompat.getColor(
+                    this,
+                    R.color.colorAccent
+            )
         )
 
         if (savedInstanceState == null) {
@@ -70,8 +68,9 @@ class AppSelectionActivity : AppCompatActivity() {
             allApps = savedInstanceState.getParcelableArrayList(STATE_APPS)
             mapApps = savedInstanceState.getParcelableArrayList(STATE_MAP_APPS)
             isMapsOnly = savedInstanceState.getBoolean(STATE_MAPS_ONLY)
-            selectedPackageNames =
-                    HashSet(savedInstanceState.getStringArrayList(STATE_SELECTED_APPS))
+            selectedPackageNames = savedInstanceState.getStringArrayList(STATE_SELECTED_APPS)?.let {
+                HashSet(it)
+            }
         }
 
         if (mapApps == null) {
@@ -98,8 +97,9 @@ class AppSelectionActivity : AppCompatActivity() {
 
     private fun reloadInstalledApps() = lifecycleScope.launch {
         isLoadingAllApps = true
-        if (!isMapsOnly)
+        if (!isMapsOnly) {
             binding.swiperefresh.isRefreshing = true
+        }
         selectedPackageNames = HashSet(PrefUtils.getApps(this@AppSelectionActivity))
 
         try {
@@ -121,8 +121,9 @@ class AppSelectionActivity : AppCompatActivity() {
 
     private fun reloadMapApps() = lifecycleScope.launch {
         isLoadingMapApps = true
-        if (isMapsOnly)
+        if (isMapsOnly) {
             binding.swiperefresh.isRefreshing = true
+        }
         selectedPackageNames = PrefUtils.getApps(this@AppSelectionActivity)
 
         try {
@@ -173,7 +174,7 @@ class AppSelectionActivity : AppCompatActivity() {
     }
 
     private fun onItemClick(appInfo: AppInfo, checked: Boolean) {
-        if (appInfo.packageName != null && !appInfo.packageName.isEmpty()) {
+        if (appInfo.packageName != null && appInfo.packageName.isNotEmpty()) {
             if (checked) {
                 selectedPackageNames?.add(appInfo.packageName)
             } else {
@@ -189,7 +190,7 @@ class AppSelectionActivity : AppCompatActivity() {
         val allMapApps = mapApps?.let { mapApps ->
             (selectedPackageNames?.containsAll(mapApps.map { it.packageName }) == true)
         } ?: false
-        PrefUtils.setAllMapApps(this@AppSelectionActivity, allMapApps);
+        PrefUtils.setAllMapApps(this@AppSelectionActivity, allMapApps)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -209,11 +210,7 @@ class AppSelectionActivity : AppCompatActivity() {
         }
 
         fun setAppInfos(list: List<AppInfo>?) {
-            if (list == null) {
-                appInfos = ArrayList()
-            } else {
-                appInfos = list
-            }
+            appInfos = list ?: ArrayList()
             notifyDataSetChanged()
         }
 
@@ -222,19 +219,17 @@ class AppSelectionActivity : AppCompatActivity() {
             return ViewHolder(view)
         }
 
-
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val app = appInfos!![position]
 
             Glide.with(this@AppSelectionActivity)
-                    .load(app)
-                    .crossFade()
-                    .into(holder.icon)
+                .load(app)
+                .crossFade()
+                .into(holder.icon)
 
             holder.title.text = app.name
             holder.desc.text = app.packageName
             holder.checkbox.isChecked = selectedPackageNames!!.contains(app.packageName)
-
         }
 
         override fun getItemCount(): Int {
@@ -245,7 +240,7 @@ class AppSelectionActivity : AppCompatActivity() {
             return appInfos!![position].packageName.hashCode().toLong()
         }
 
-        internal inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             var icon: ImageView
             var title: TextView
             var desc: TextView

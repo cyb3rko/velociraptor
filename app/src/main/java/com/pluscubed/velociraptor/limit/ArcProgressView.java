@@ -2,7 +2,6 @@ package com.pluscubed.velociraptor.limit;
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -16,7 +15,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SweepGradient;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -28,6 +26,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
 import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 
 import com.pluscubed.velociraptor.R;
@@ -37,7 +36,6 @@ import java.util.List;
 import java.util.Random;
 
 public class ArcProgressView extends View {
-
     // Default values
     private final static float DEFAULT_START_ANGLE = 270.0F;
     private final static float DEFAULT_SWEEP_ANGLE = 360.0F;
@@ -106,8 +104,6 @@ public class ArcProgressView extends View {
 
     // ValueAnimator and interpolator for progress animating
     private final ValueAnimator mProgressAnimator = new ValueAnimator();
-    private ValueAnimator.AnimatorListener mAnimatorListener;
-    private ValueAnimator.AnimatorUpdateListener mAnimatorUpdateListener;
     private Interpolator mInterpolator;
     private int mAnimationDuration;
     private float mAnimatedFraction;
@@ -146,14 +142,11 @@ public class ArcProgressView extends View {
     private int mActionMoveSliceCounter;
     private boolean mIsActionMoved;
 
-    // Text typeface
-    private Typeface mTypeface;
-
     // Indicator orientation
     private IndicatorOrientation mIndicatorOrientation;
 
     // Is >= VERSION_CODES.HONEYCOMB
-    private boolean mIsFeaturesAvailable;
+    private final boolean mIsFeaturesAvailable;
 
     public ArcProgressView(final Context context) {
         this(context, null);
@@ -277,26 +270,17 @@ public class ArcProgressView extends View {
                 interpolator = interpolatorId == 0 ? null :
                         AnimationUtils.loadInterpolator(context, interpolatorId);
             } catch (Resources.NotFoundException exception) {
-                interpolator = null;
                 exception.printStackTrace();
             } finally {
                 setInterpolator(interpolator);
             }
 
             // Set animation info if is available
-            if (mIsFeaturesAvailable) {
-                mProgressAnimator.setFloatValues(MIN_FRACTION, MAX_FRACTION);
-                mProgressAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(final ValueAnimator animation) {
-                        mAnimatedFraction = (float) animation.getAnimatedValue();
-                        if (mAnimatorUpdateListener != null)
-                            mAnimatorUpdateListener.onAnimationUpdate(animation);
-
-                        postInvalidate();
-                    }
-                });
-            }
+            mProgressAnimator.setFloatValues(MIN_FRACTION, MAX_FRACTION);
+            mProgressAnimator.addUpdateListener(animation -> {
+                mAnimatedFraction = (float) animation.getAnimatedValue();
+                postInvalidate();
+            });
 
             // Check whether draw width dimension or fraction
             if (typedArray.hasValue(R.styleable.ArcProgressStackView_apsv_draw_width)) {
@@ -318,7 +302,6 @@ public class ArcProgressView extends View {
                     );
                     preview = previewId == 0 ? null : typedArray.getResources().getStringArray(previewId);
                 } catch (Exception exception) {
-                    preview = null;
                     exception.printStackTrace();
                 } finally {
                     if (preview == null)
@@ -343,41 +326,9 @@ public class ArcProgressView extends View {
         }
     }
 
-    public ValueAnimator getProgressAnimator() {
-        return mProgressAnimator;
-    }
-
-    public long getAnimationDuration() {
-        return mAnimationDuration;
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void setAnimationDuration(final long animationDuration) {
         mAnimationDuration = (int) animationDuration;
         mProgressAnimator.setDuration(animationDuration);
-    }
-
-    public ValueAnimator.AnimatorListener getAnimatorListener() {
-        return mAnimatorListener;
-    }
-
-    public void setAnimatorListener(final ValueAnimator.AnimatorListener animatorListener) {
-        if (mAnimatorListener != null) mProgressAnimator.removeListener(mAnimatorListener);
-
-        mAnimatorListener = animatorListener;
-        mProgressAnimator.addListener(animatorListener);
-    }
-
-    public ValueAnimator.AnimatorUpdateListener getAnimatorUpdateListener() {
-        return mAnimatorUpdateListener;
-    }
-
-    public void setAnimatorUpdateListener(final ValueAnimator.AnimatorUpdateListener animatorUpdateListener) {
-        mAnimatorUpdateListener = animatorUpdateListener;
-    }
-
-    public float getStartAngle() {
-        return mStartAngle;
     }
 
     @SuppressLint("SupportAnnotationUsage")
@@ -385,10 +336,6 @@ public class ArcProgressView extends View {
     public void setStartAngle(@FloatRange(from = MIN_ANGLE, to = MAX_ANGLE) final float startAngle) {
         mStartAngle = Math.max(MIN_ANGLE, Math.min(startAngle, MAX_ANGLE));
         postInvalidate();
-    }
-
-    public float getSweepAngle() {
-        return mSweepAngle;
     }
 
     @SuppressLint("SupportAnnotationUsage")
@@ -412,32 +359,14 @@ public class ArcProgressView extends View {
         return mSize;
     }
 
-    public float getProgressModelSize() {
-        return mProgressModelSize;
-    }
-
-    public boolean isAnimated() {
-        return mIsAnimated;
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void setIsAnimated(final boolean isAnimated) {
         mIsAnimated = mIsFeaturesAvailable && isAnimated;
     }
 
-    public boolean isShadowed() {
-        return mIsShadowed;
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void setIsShadowed(final boolean isShadowed) {
         mIsShadowed = mIsFeaturesAvailable && isShadowed;
         resetShadowLayer();
         requestLayout();
-    }
-
-    public boolean isModelBgEnabled() {
-        return mIsModelBgEnabled;
     }
 
     public void setModelBgEnabled(final boolean modelBgEnabled) {
@@ -445,17 +374,9 @@ public class ArcProgressView extends View {
         postInvalidate();
     }
 
-    public boolean isShowProgress() {
-        return mIsShowProgress;
-    }
-
     public void setShowProgress(final boolean showProgress) {
         mIsShowProgress = showProgress;
         postInvalidate();
-    }
-
-    public boolean isRounded() {
-        return mIsRounded;
     }
 
     public void setIsRounded(final boolean isRounded) {
@@ -470,16 +391,8 @@ public class ArcProgressView extends View {
         requestLayout();
     }
 
-    public boolean isDragged() {
-        return mIsDragged;
-    }
-
     public void setIsDragged(final boolean isDragged) {
         mIsDragged = isDragged;
-    }
-
-    public boolean isLeveled() {
-        return mIsLeveled;
     }
 
     public void setIsLeveled(final boolean isLeveled) {
@@ -487,27 +400,14 @@ public class ArcProgressView extends View {
         requestLayout();
     }
 
-    public Interpolator getInterpolator() {
-        return (Interpolator) mProgressAnimator.getInterpolator();
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void setInterpolator(final Interpolator interpolator) {
         mInterpolator = interpolator == null ? new AccelerateDecelerateInterpolator() : interpolator;
         mProgressAnimator.setInterpolator(mInterpolator);
     }
 
-    public float getProgressModelOffset() {
-        return mProgressModelOffset;
-    }
-
     public void setProgressModelOffset(final float progressModelOffset) {
         mProgressModelOffset = progressModelOffset;
         requestLayout();
-    }
-
-    public float getDrawWidthFraction() {
-        return mDrawWidthFraction;
     }
 
     @SuppressLint("SupportAnnotationUsage")
@@ -519,28 +419,16 @@ public class ArcProgressView extends View {
         requestLayout();
     }
 
-    public float getDrawWidthDimension() {
-        return mDrawWidthDimension;
-    }
-
     public void setDrawWidthDimension(final float drawWidthDimension) {
         mDrawWidthFraction = MIN_FRACTION;
         mDrawWidthDimension = drawWidthDimension;
         requestLayout();
     }
 
-    public float getShadowDistance() {
-        return mShadowDistance;
-    }
-
     public void setShadowDistance(final float shadowDistance) {
         mShadowDistance = shadowDistance;
         resetShadowLayer();
         requestLayout();
-    }
-
-    public float getShadowAngle() {
-        return mShadowAngle;
     }
 
     @SuppressLint("SupportAnnotationUsage")
@@ -551,18 +439,10 @@ public class ArcProgressView extends View {
         requestLayout();
     }
 
-    public float getShadowRadius() {
-        return mShadowRadius;
-    }
-
     public void setShadowRadius(final float shadowRadius) {
-        mShadowRadius = shadowRadius > MIN_SHADOW ? shadowRadius : MIN_SHADOW;
+        mShadowRadius = Math.max(shadowRadius, MIN_SHADOW);
         resetShadowLayer();
         requestLayout();
-    }
-
-    public int getShadowColor() {
-        return mShadowColor;
     }
 
     public void setShadowColor(final int shadowColor) {
@@ -581,10 +461,6 @@ public class ArcProgressView extends View {
         postInvalidate();
     }
 
-    public Typeface getTypeface() {
-        return mTypeface;
-    }
-
     public void setTypeface(final String typeface) {
         Typeface tempTypeface;
         try {
@@ -598,13 +474,9 @@ public class ArcProgressView extends View {
     }
 
     public void setTypeface(final Typeface typeface) {
-        mTypeface = typeface;
+        // Text typeface
         mTextPaint.setTypeface(typeface);
         postInvalidate();
-    }
-
-    public IndicatorOrientation getIndicatorOrientation() {
-        return mIndicatorOrientation;
     }
 
     public void setIndicatorOrientation(final IndicatorOrientation indicatorOrientation) {
@@ -632,15 +504,15 @@ public class ArcProgressView extends View {
         if (mIsShadowed || mIsLeveled) {
             final float shadowOffset = mShadowRadius * 0.5f;
             mLevelPaint.setShadowLayer(
-                    shadowOffset, 0.0f, -shadowOffset, adjustColorAlpha(mShadowColor, 0.5f)
+                    shadowOffset, 0.0f, -shadowOffset, adjustColorAlpha(mShadowColor)
             );
         } else mLevelPaint.clearShadowLayer();
     }
 
     // Adjust color alpha(used for shadow reduce)
-    private int adjustColorAlpha(final int color, final float factor) {
+    private int adjustColorAlpha(final int color) {
         return Color.argb(
-                Math.round(Color.alpha(color) * factor),
+                Math.round(Color.alpha(color) * 0.5f),
                 Color.red(color),
                 Color.green(color),
                 Color.blue(color)
@@ -649,30 +521,24 @@ public class ArcProgressView extends View {
 
     // Animate progress
     public void animateProgress() {
-        if (!mIsAnimated || mProgressAnimator == null) return;
+        if (!mIsAnimated) return;
         if (mProgressAnimator.isRunning()) {
-            if (mAnimatorListener != null) mProgressAnimator.removeListener(mAnimatorListener);
             mProgressAnimator.cancel();
         }
         // Set to animate all models
         mActionMoveModelIndex = ANIMATE_ALL_INDEX;
         mProgressAnimator.setDuration(mAnimationDuration);
         mProgressAnimator.setInterpolator(mInterpolator);
-        if (mAnimatorListener != null) {
-            mProgressAnimator.removeListener(mAnimatorListener);
-            mProgressAnimator.addListener(mAnimatorListener);
-        }
         mProgressAnimator.start();
     }
 
     // Animate progress
     private void animateActionMoveProgress() {
-        if (!mIsAnimated || mProgressAnimator == null) return;
+        if (!mIsAnimated) return;
         if (mProgressAnimator.isRunning()) return;
 
         mProgressAnimator.setDuration(DEFAULT_ACTION_MOVE_ANIMATION_DURATION);
         mProgressAnimator.setInterpolator(null);
-        if (mAnimatorListener != null) mProgressAnimator.removeListener(mAnimatorListener);
         mProgressAnimator.start();
     }
 
@@ -713,9 +579,8 @@ public class ArcProgressView extends View {
         else actionMoveCurrentSlice = DEFAULT_SLICE;
 
         // Check for handling counter
-        if (actionMoveCurrentSlice != 0 &&
-                ((mActionMoveLastSlice == NEGATIVE_SLICE && actionMoveCurrentSlice == POSITIVE_SLICE) ||
-                        (actionMoveCurrentSlice == NEGATIVE_SLICE && mActionMoveLastSlice == POSITIVE_SLICE))) {
+        if (((mActionMoveLastSlice == NEGATIVE_SLICE && actionMoveCurrentSlice == POSITIVE_SLICE) ||
+                (actionMoveCurrentSlice == NEGATIVE_SLICE && mActionMoveLastSlice == POSITIVE_SLICE))) {
             if (mActionMoveLastSlice == NEGATIVE_SLICE) mActionMoveSliceCounter++;
             else mActionMoveSliceCounter--;
 
@@ -804,8 +669,7 @@ public class ArcProgressView extends View {
         final int height = MeasureSpec.getSize(heightMeasureSpec);
 
         // Get size for square dimension
-        if (width > height) mSize = height;
-        else mSize = width;
+        mSize = Math.min(width, height);
 
         // Get progress offsets
         final float divider = mDrawWidthFraction == 0 ? mDrawWidthDimension : mSize * mDrawWidthFraction;
@@ -837,7 +701,7 @@ public class ArcProgressView extends View {
     }
 
     @Override
-    protected void onDraw(final Canvas canvas) {
+    protected void onDraw(@NonNull final Canvas canvas) {
         super.onDraw(canvas);
 
         // Save and rotate to start angle
@@ -1011,14 +875,12 @@ public class ArcProgressView extends View {
     }
 
     public static class Model {
-
         private String mTitle;
         private float mLastProgress;
         private float mProgress;
 
         private int mColor;
         private int mBgColor;
-        private int[] mColors;
 
         private final RectF mBounds = new RectF();
         private final Rect mTextBounds = new Rect();
@@ -1036,23 +898,10 @@ public class ArcProgressView extends View {
             setColor(color);
         }
 
-        public Model(final String title, final float progress, final int[] colors) {
-            setTitle(title);
-            setProgress(progress);
-            setColors(colors);
-        }
-
         public Model(final String title, final float progress, final int bgColor, final int color) {
             setTitle(title);
             setProgress(progress);
             setColor(color);
-            setBgColor(bgColor);
-        }
-
-        public Model(final String title, final float progress, final int bgColor, final int[] colors) {
-            setTitle(title);
-            setProgress(progress);
-            setColors(colors);
             setBgColor(bgColor);
         }
 
@@ -1090,12 +939,7 @@ public class ArcProgressView extends View {
         }
 
         public int[] getColors() {
-            return mColors;
-        }
-
-        public void setColors(final int[] colors) {
-            if (colors != null && colors.length >= 2) mColors = colors;
-            else mColors = null;
+            return null;
         }
     }
 

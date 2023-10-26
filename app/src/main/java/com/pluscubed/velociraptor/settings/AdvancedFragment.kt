@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -91,22 +90,19 @@ class AdvancedFragment : Fragment() {
             )
 
             NotificationUtils.initChannels(context)
-            val builder =
-                    context?.let { it1 ->
-                        NotificationCompat.Builder(it1, NotificationUtils.CHANNEL_TOGGLES)
-                                .setSmallIcon(R.drawable.ic_speedometer_notif)
-                                .setContentTitle(getString(R.string.controls_notif_title))
-                                .setContentText(getString(R.string.controls_notif_desc))
-                                .addAction(0, getString(R.string.show), pending)
-                                .addAction(0, getString(R.string.hide), pendingClose)
-                                .setDeleteIntent(pendingClose)
-                                .setContentIntent(settingsIntent)
-                    }
+            val builder = context?.let {
+                NotificationCompat.Builder(it, NotificationUtils.CHANNEL_TOGGLES)
+                    .setSmallIcon(R.drawable.ic_speedometer_notif)
+                    .setContentTitle(getString(R.string.controls_notif_title))
+                    .setContentText(getString(R.string.controls_notif_desc))
+                    .addAction(0, getString(R.string.show), pending)
+                    .addAction(0, getString(R.string.hide), pendingClose)
+                    .setDeleteIntent(pendingClose)
+                    .setContentIntent(settingsIntent)
+            }
             val notification = builder?.build()
             notificationManager?.notify(NOTIFICATION_CONTROLS, notification)
         }
-
-
 
         binding.linearClearCache.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
@@ -150,8 +146,8 @@ class AdvancedFragment : Fragment() {
             if (accessGranted) {
                 gmapsOnlyNavigationSwitch.toggle()
                 PrefUtils.setGmapsOnlyInNavigation(
-                        context,
-                        gmapsOnlyNavigationSwitch.isChecked
+                    context,
+                    gmapsOnlyNavigationSwitch.isChecked
                 )
             } else {
                 if (context == null) return@setOnClickListener
@@ -159,11 +155,7 @@ class AdvancedFragment : Fragment() {
                     .setMessage(R.string.gmaps_only_nav_notif_access)
                     .setPositiveButton(R.string.grant) { _, _ ->
                         try {
-                            val settingsAction =
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1)
-                                    Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS
-                                else
-                                    "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"
+                            val settingsAction = Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS
                             val intent = Intent(settingsAction)
                             startActivity(intent)
                         } catch (ignored: ActivityNotFoundException) {

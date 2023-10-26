@@ -35,7 +35,6 @@ class PermissionsFragment : Fragment() {
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -68,7 +67,7 @@ class PermissionsFragment : Fragment() {
         binding.buttonFloatingEnabled.setOnClickListener {
             try {
                 //Open the current default browswer App Info page
-                openSettings(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, BuildConfig.APPLICATION_ID)
+                openOverlaySettings()
             } catch (ignored: ActivityNotFoundException) {
                 Snackbar.make(
                     it,
@@ -111,9 +110,13 @@ class PermissionsFragment : Fragment() {
         )
         binding.buttonFloatingEnabled.isEnabled = !overlayEnabled
 
-        val serviceEnabled =
-                Utils.isAccessibilityServiceEnabled(activity, AppDetectionService::class.java)
-        binding.imageServiceEnabled.setImageResource(if (serviceEnabled) R.drawable.ic_done_green_40dp else R.drawable.ic_cross_red_40dp)
+        val serviceEnabled = Utils.isAccessibilityServiceEnabled(
+            activity,
+            AppDetectionService::class.java
+        )
+        binding.imageServiceEnabled.setImageResource(
+            if (serviceEnabled) R.drawable.ic_done_green_40dp else R.drawable.ic_cross_red_40dp
+        )
         binding.buttonEnableService.isEnabled = !serviceEnabled
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -129,9 +132,9 @@ class PermissionsFragment : Fragment() {
         }
     }
 
-    private fun openSettings(settingsAction: String, packageName: String) {
-        val intent = Intent(settingsAction)
-        intent.data = Uri.parse("package:$packageName")
+    private fun openOverlaySettings() {
+        val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+        intent.data = Uri.parse("package:${BuildConfig.APPLICATION_ID}")
         startActivity(intent)
     }
 }
