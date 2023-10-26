@@ -142,7 +142,7 @@ dependencies {
     implementation 'com.github.cyb3rko:quickpermissions-kotlin:1.1.2'
 
     // LeakCanary temporarily disabled
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
 }
 
 configurations {
