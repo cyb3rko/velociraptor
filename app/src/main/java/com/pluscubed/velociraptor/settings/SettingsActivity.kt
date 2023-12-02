@@ -31,7 +31,7 @@ class SettingsActivity : AppCompatActivity() {
     private val generalFragment = GeneralFragment()
     private val advancedFragment = AdvancedFragment()
     private var active: Fragment = permissionsFragment
-
+    private var bottomNavigationSelectedItemId = R.id.action_permissions
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,6 +93,14 @@ class SettingsActivity : AppCompatActivity() {
 
         PrefUtils.setFirstRun(this, false)
         PrefUtils.setVersionCode(this, BuildConfig.VERSION_CODE)
+
+        if (savedInstanceState != null) {
+            bottomNavigationSelectedItemId = savedInstanceState.getInt(
+                "selectedItemId",
+                R.id.action_advanced
+            )
+            binding.bottomNavigation.selectedItemId = bottomNavigationSelectedItemId
+        }
     }
 
     override fun onPause() {
@@ -121,6 +129,11 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt("selectedItemId", binding.bottomNavigation.selectedItemId)
+        super.onSaveInstanceState(outState)
     }
 
     private fun showAboutDialog() {
