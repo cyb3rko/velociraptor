@@ -3,19 +3,12 @@ package com.pluscubed.velociraptor.settings.appselection
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.pluscubed.velociraptor.R
 import com.pluscubed.velociraptor.databinding.ActivityAppselectionBinding
 import com.pluscubed.velociraptor.detection.AppDetectionService
@@ -41,7 +34,19 @@ class AppSelectionActivity : AppCompatActivity() {
         binding = ActivityAppselectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        adapter = AppAdapter()
+        adapter = AppAdapter(
+            applicationContext,
+            isSelected = {
+                if (selectedPackageNames != null) {
+                    selectedPackageNames!!.contains(it)
+                } else {
+                    false
+                }
+            },
+            onItemClick = { appInfo, checked ->
+                onItemClick(appInfo, checked)
+            }
+        )
         binding.recyclerview.let {
             it.adapter = adapter
             it.layoutManager = LinearLayoutManager(this)
@@ -53,14 +58,8 @@ class AppSelectionActivity : AppCompatActivity() {
             } else {
                 reloadInstalledApps()
             }
-            adapter.setAppInfos(ArrayList())
+            adapter.submitList(ArrayList())
         }
-        binding.swiperefresh.setColorSchemeColors(
-            ContextCompat.getColor(
-                    this,
-                    R.color.colorAccent
-            )
-        )
 
         if (savedInstanceState == null) {
             isMapsOnly = true
@@ -76,13 +75,13 @@ class AppSelectionActivity : AppCompatActivity() {
         if (mapApps == null) {
             reloadMapApps()
         } else if (isMapsOnly) {
-            adapter.setAppInfos(mapApps)
+            adapter.submitList(mapApps)
         }
 
         if (allApps == null) {
             reloadInstalledApps()
         } else if (!isMapsOnly) {
-            adapter.setAppInfos(allApps)
+            adapter.submitList(allApps)
         }
 
         setTitle(R.string.select_apps)
@@ -108,7 +107,7 @@ class AppSelectionActivity : AppCompatActivity() {
             }
 
             if (!isMapsOnly) {
-                adapter.setAppInfos(installedApps)
+                adapter.submitList(installedApps)
                 binding.swiperefresh.isRefreshing = false
             }
             allApps = ArrayList(installedApps)
@@ -132,7 +131,7 @@ class AppSelectionActivity : AppCompatActivity() {
             }
 
             if (isMapsOnly) {
-                adapter.setAppInfos(mapApps)
+                adapter.submitList(mapApps)
                 binding.swiperefresh.isRefreshing = false
             }
             this@AppSelectionActivity.mapApps = ArrayList(mapApps)
@@ -164,13 +163,13 @@ class AppSelectionActivity : AppCompatActivity() {
             R.id.menu_app_selection_maps -> {
                 isMapsOnly = !isMapsOnly
                 invalidateOptionsMenu()
-                adapter.setAppInfos(if (isMapsOnly) mapApps else allApps)
+                adapter.submitList(if (isMapsOnly) mapApps else allApps)
                 binding.swiperefresh.isRefreshing = isMapsOnly && isLoadingMapApps ||
                         !isMapsOnly && isLoadingAllApps
                 return true
             }
         }
-        return super.onOptionsItemSelected(item)
+        return false
     }
 
     private fun onItemClick(appInfo: AppInfo, checked: Boolean) {
@@ -199,69 +198,6 @@ class AppSelectionActivity : AppCompatActivity() {
         outState.putBoolean(STATE_MAPS_ONLY, isMapsOnly)
         outState.putStringArrayList(STATE_SELECTED_APPS, ArrayList(selectedPackageNames!!))
         super.onSaveInstanceState(outState)
-    }
-
-    private inner class AppAdapter : RecyclerView.Adapter<AppAdapter.ViewHolder>() {
-        private var appInfos: List<AppInfo>? = null
-
-        init {
-            setHasStableIds(true)
-            appInfos = ArrayList()
-        }
-
-        fun setAppInfos(list: List<AppInfo>?) {
-            appInfos = list ?: ArrayList()
-            notifyDataSetChanged()
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = layoutInflater.inflate(R.layout.list_item_app, parent, false)
-            return ViewHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val app = appInfos!![position]
-
-            Glide.with(this@AppSelectionActivity)
-                .load(app)
-                .crossFade()
-                .into(holder.icon)
-
-            holder.title.text = app.name
-            holder.desc.text = app.packageName
-            holder.checkbox.isChecked = selectedPackageNames!!.contains(app.packageName)
-        }
-
-        override fun getItemCount(): Int {
-            return appInfos!!.size
-        }
-
-        override fun getItemId(position: Int): Long {
-            return appInfos!![position].packageName.hashCode().toLong()
-        }
-
-        inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            var icon: ImageView
-            var title: TextView
-            var desc: TextView
-            var checkbox: CheckBox
-
-            init {
-                icon = itemView.findViewById(R.id.image_app)
-                title = itemView.findViewById(R.id.text_name)
-                desc = itemView.findViewById(R.id.text_desc)
-                checkbox = itemView.findViewById(R.id.checkbox)
-
-                itemView.setOnClickListener {
-                    checkbox.toggle()
-
-                    val adapterPosition = adapterPosition
-                    if (adapterPosition != RecyclerView.NO_POSITION) {
-                        onItemClick(appInfos!![adapterPosition], checkbox.isChecked)
-                    }
-                }
-            }
-        }
     }
 
     companion object {
