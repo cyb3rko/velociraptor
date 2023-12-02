@@ -27,7 +27,6 @@ internal class AppAdapter(
         val app = currentList[position]
         Glide.with(context)
             .load(app)
-            .crossFade()
             .into(holder.icon)
 
         holder.title.text = app.name

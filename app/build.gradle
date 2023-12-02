@@ -10,11 +10,11 @@ buildscript {
 }
 plugins {
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.0'
+    id 'com.google.devtools.ksp'
 }
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
-apply plugin: 'kotlin-kapt'
 
 android {
     compileSdk 34
@@ -38,9 +38,7 @@ android {
         }
     }
 
-
     namespace "com.pluscubed.velociraptor"
-
     defaultConfig {
         applicationId "com.pluscubed.velociraptor"
         minSdk 23
@@ -61,7 +59,6 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
             if (project.hasProperty("RELEASE_STORE_FILE")) {
                 signingConfig signingConfigs.release
             } else {
@@ -72,7 +69,6 @@ android {
         debugIap {
             debuggable true
             multiDexEnabled true
-
             if (project.hasProperty("RELEASE_STORE_FILE")) {
                 signingConfig signingConfigs.release
             } else {
@@ -82,66 +78,54 @@ android {
 
         debug {
             multiDexEnabled true
-
             applicationIdSuffix '.debug'
             versionNameSuffix '-DEBUG'
             testCoverageEnabled false
             manifestPlaceholders = [appName: "Velociraptor DEBUG"]
         }
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-
     kotlinOptions {
         jvmTarget = "17"
     }
-
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 }
 
-ext{
-    room_version = '2.2.5'
+ext {
+    room_version = '2.6.1'
     ktor_version = '2.3.5'
+    glide_version = '4.16.0'
 }
 
 dependencies {
-    //debugImplementation 'im.dino:dbinspector:3.4.1@aar'
-    //debugIapImplementation 'im.dino:dbinspector:3.4.1@aar'
-
-    implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
-
     implementation "androidx.cardview:cardview:1.0.0"
+    implementation "androidx.lifecycle:lifecycle-service:2.6.2"
+    implementation "androidx.room:room-runtime:$room_version"
+    ksp "androidx.room:room-compiler:$room_version"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
-    implementation 'com.google.android.material:material:1.10.0'
-
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0'
-    implementation "androidx.lifecycle:lifecycle-service:2.2.0"
-
-    implementation "com.google.android.gms:play-services-location:17.1.0"
-    implementation "com.google.android.gms:play-services-oss-licenses:17.0.0"
-    implementation "com.google.android.gms:play-services-maps:17.0.0"
+    implementation "com.github.bumptech.glide:glide:$glide_version"
+    ksp "com.github.bumptech.glide:ksp:$glide_version"
+    implementation "com.google.android.gms:play-services-location:21.0.1"
+    implementation "com.google.android.gms:play-services-maps:18.2.0"
+    implementation "com.google.android.gms:play-services-oss-licenses:17.0.1"
     implementation "com.google.maps.android:android-maps-utils:2.2.0"
-
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0'
-    implementation "io.ktor:ktor-client-core:$ktor_version"
     implementation "io.ktor:ktor-client-cio:$ktor_version"
-    implementation "io.ktor:ktor-client-logging:$ktor_version"
     implementation "io.ktor:ktor-client-content-negotiation:$ktor_version"
+    implementation "io.ktor:ktor-client-core:$ktor_version"
+    implementation "io.ktor:ktor-client-logging:$ktor_version"
     implementation "io.ktor:ktor-serialization-kotlinx-json:$ktor_version"
-
-    implementation 'com.github.bumptech.glide:glide:3.8.0'
-
-    implementation 'com.jakewharton.timber:timber:4.7.1'
-
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
     implementation 'com.github.cyb3rko:quickpermissions-kotlin:1.1.2'
+    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.1'
 
-    // LeakCanary temporarily disabled
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
 }
 

@@ -120,9 +120,9 @@ class LimitService : LifecycleService() {
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
         locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
+            override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
-                onLocationChanged(locationResult!!.lastLocation)
+                locationResult.lastLocation?.let { onLocationChanged(it) }
             }
         }
 

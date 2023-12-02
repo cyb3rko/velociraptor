@@ -22,8 +22,7 @@
         android:label="${appName}"
         android:supportsRtl="true"
         android:theme="@style/Theme.Velociraptor"
-        tools:ignore="GoogleAppIndexingWarning"
-        tools:replace="android:label">
+        tools:ignore="GoogleAppIndexingWarning">
 
         <activity
             android:name=".settings.SettingsActivity"
